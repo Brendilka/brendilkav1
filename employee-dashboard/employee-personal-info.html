@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Information - Brendilka</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --header-bg: #2c3e50; --header-accent: #1abc9c; --employee-accent: #3498db; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f7f6; }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+        .page-container { width: 95%; max-width: 900px; margin: 20px auto; }
+        .section-title { font-size: 1.8em; color: var(--header-bg); margin-bottom: 25px; padding-bottom: 10px; border-bottom: 3px solid var(--employee-accent); }
+        .info-container { background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.07); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .info-field .label { font-size: 0.9em; color: #7f8c8d; font-weight: 500; }
+        .info-field .value { font-size: 1.1em; font-weight: 400; min-height: 1.1em; } /* Added min-height to prevent layout shifts */
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <!-- HEADER LINK CORRECTED TO GO UP ONE DIRECTORY -->
+    <header class="page-header"><a href="../employee-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+
+    <div class="page-container">
+        <h2 class="section-title">My Personal Information</h2>
+        <div class="info-container">
+            <div class="info-grid">
+                <!-- Each value div now has an ID and is empty, waiting for the script to fill it -->
+                <div class="info-field"><span class="label">Full Name</span><div class="value" id="full-name"></div></div>
+                <div class="info-field"><span class="label">Employee ID</span><div class="value" id="employee-id"></div></div>
+                <div class="info-field"><span class="label">Home Address</span><div class="value" id="home-address"></div></div>
+                <div class="info-field"><span class="label">Phone Number</span><div class="value" id="phone-number"></div></div>
+                <div class="info-field"><span class="label">Job Title</span><div class="value" id="job-title"></div></div>
+                <div class="info-field"><span class="label">Department</span><div class="value" id="department"></div></div>
+                <div class="info-field"><span class="label">Manager</span><div class="value" id="manager-name"></div></div>
+                <div class="info-field"><span class="label">Emergency Contact</span><div class="value" id="emergency-contact"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT TO FETCH AND DISPLAY DYNAMIC DATA -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('/api/user/details', { credentials: 'include' })
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                           // If not authorized, redirect to login page
+                           window.location.href = '/'; 
+                        }
+                        throw new Error('Could not fetch user data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Helper function to safely set text content
+                    const setText = (id, value) => {
+                        const el = document.getElementById(id);
+                        if (el) el.textContent = value || 'N/A';
+                    };
+
+                    // Populate the fields using the IDs we added to the HTML
+                    setText('full-name', data.full_name);
+                    setText('employee-id', data.employee_id);
+                    setText('home-address', data.home_address);
+                    setText('phone-number', data.phone_number);
+                    setText('job-title', data.job_title);
+                    setText('department', data.department);
+                    setText('manager-name', data.manager_name);
+
+                    // Combine emergency contact name and phone for display
+                    const emergencyContactName = data.emergency_contact_name || 'N/A';
+                    const emergencyContactPhone = data.emergency_contact_phone || '';
+                    const emergencyContactFull = `${emergencyContactName} ${emergencyContactPhone.trim() ? '(' + emergencyContactPhone + ')' : ''}`.trim();
+                    setText('emergency-contact', emergencyContactFull);
+                })
+                .catch(error => {
+                    console.error('Error fetching employee details:', error);
+                    // Display an error message on the page if the fetch fails
+                    document.body.innerHTML = `<h1>Error: Could not load details. Please <a href="/">log in</a> again.</h1>`;
+                });
+        });
+    </script>
+</body>
+</html>

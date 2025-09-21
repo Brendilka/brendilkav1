@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Schedule - Brendilka Time Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-orange: #e67e22;
+            --border-color: #ecf0f1;
+            --shift-color1: #3498db;
+            --shift-color2: #9b59b6;
+            --leave-color: #f1c40f;
+            --success-color: #27ae60;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); color: #333; }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 98%; max-width: 1600px; margin: 20px auto; }
+        .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; background-color: var(--card-bg); padding: 15px 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 20px; color: #333; }
+        .toolbar-nav a { padding: 8px 15px; border-radius: 5px; text-decoration: none; color: var(--header-bg); font-weight: 500; cursor: pointer; }
+        .toolbar-nav a:hover { background-color: var(--page-bg); }
+        .toolbar-title { font-size: 1.2em; font-weight: 500; color: #333; }
+        .btn-publish { background-color: var(--accent-orange); color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: 700; cursor: pointer; border: none; }
+        .btn-publish:hover { background-color: #d35400; }
+
+        .schedule-container { overflow-x: auto; }
+        .employee-row { margin-bottom: 20px; border: 1px solid var(--border-color); border-radius: 8px; background: white; color: #333; }
+        .employee-header { background: #f8f9fa; padding: 15px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; color: #333; }
+        .employee-name { font-weight: 600; font-size: 1.1em; color: #333; }
+        .pattern-controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .pattern-controls label { font-weight: 500; color: #333; }
+        .pattern-controls select { padding: 5px; border: 1px solid #ddd; border-radius: 3px; color: #333; }
+        .pattern-controls button { padding: 5px 10px; background: var(--success-color); color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .template-upload { display: flex; gap: 5px; margin-left: 10px; }
+        .template-upload button { padding: 4px 8px; font-size: 0.8em; background: var(--accent-orange); color: white; }
+        .template-upload button:hover { background: #d35400; }
+        
+        .employee-schedule { padding: 15px; }
+        .schedule-table { width: 100%; border-collapse: collapse; table-layout: auto; color: #333; }
+        .schedule-table th, .schedule-table td { border: 1px solid var(--border-color); padding: 8px; vertical-align: top; min-width: 100px; text-align: center; color: #333; }
+        .schedule-table thead th { background: #f8f9fa; font-weight: 500; font-size: 0.9em; color: #333; }
+        .week-header { 
+            background: #34495e !important; 
+            color: white !important; 
+            font-size: 0.9em !important; 
+            font-weight: 600 !important;
+            text-shadow: none !important;
+        }
+        
+        .no-employees { text-align: center; padding: 40px; color: #666; font-style: italic; }
+        .shift-block { padding: 8px; border-radius: 5px; color: white; font-size: 0.85em; margin-bottom: 5px; cursor: pointer; position: relative; }
+        .shift-day { background-color: var(--shift-color1); }
+        .shift-night { background-color: var(--shift-color2); }
+        .shift-leave { background-color: var(--leave-color); }
+        
+        .schedule-cell { min-height: 60px; position: relative; cursor: pointer; }
+        .schedule-cell:hover { background-color: #f8f9fa; }
+        .schedule-cell.editing { background-color: #fff3cd; }
+        
+        .edit-controls { display: none; position: absolute; top: 5px; right: 5px; }
+        .edit-controls button { background: var(--success-color); color: white; border: none; padding: 2px 6px; border-radius: 3px; cursor: pointer; margin-left: 2px; font-size: 0.7em; }
+        .edit-controls button:hover { background: #229954; }
+        .clear-btn { background: #e74c3c !important; }
+        .clear-btn:hover { background: #c0392b !important; }
+        
+        .time-inputs { display: none; flex-direction: column; gap: 5px; }
+        .time-inputs input, .time-inputs select { padding: 4px; border: 1px solid #ddd; border-radius: 3px; font-size: 0.8em; color: #333; background: white; }
+        
+        .loading { text-align: center; padding: 20px; color: #666; }
+        .error-message { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        .success-message { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin: 10px 0; }
+        
+        .legend { display: flex; gap: 20px; margin-bottom: 15px; align-items: center; color: #333; }
+        .legend-item { display: flex; align-items: center; gap: 5px; color: #333; }
+        .legend-color { width: 20px; height: 20px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="../../manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <div class="toolbar">
+            <div class="toolbar-nav">
+                <a href="#" id="prevWeek"><i class="fas fa-chevron-left"></i> Prev Week</a>
+            </div>
+            <div class="toolbar-title" id="weekTitle">Loading...</div>
+            <div class="toolbar-nav">
+                <a href="#" id="nextWeek">Next Week <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <button class="btn-publish" id="publishBtn">Save All Changes</button>
+        </div>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color shift-day"></div>
+                <span>Day Shift</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color shift-night"></div>
+                <span>Night Shift</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color shift-leave"></div>
+                <span>Leave/Off</span>
+            </div>
+        </div>
+        
+        <div id="messageContainer"></div>
+        
+        <div class="schedule-container">
+            <div id="loadingMessage" class="loading">Loading schedule...</div>
+            <div id="employeesContainer">
+                <!-- Individual employee schedules will be rendered here -->
+            </div>
+            <div id="noEmployees" class="no-employees" style="display: none;">
+                No employees found. Please create employee accounts first.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentWeek = new Date();
+        let employees = [];
+
+        // Set current week to Monday
+        function getMonday(date) {
+            const d = new Date(date);
+            const day = d.getDay();
+            const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            d.setDate(diff);
+            d.setHours(0, 0, 0, 0);
+            return d;
+        }
+
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        function formatDisplayDate(date) {
+            const options = { month: 'short', day: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
+        }
+
+        function updateWeekDisplay() {
+            const monday = getMonday(currentWeek);
+            const sunday = new Date(monday);
+            sunday.setDate(sunday.getDate() + 6);
+
+            document.getElementById('weekTitle').textContent = 
+                `Week of ${formatDisplayDate(monday)} - ${formatDisplayDate(sunday)}, ${monday.getFullYear()}`;
+        }
+
+        async function loadEmployees() {
+            try {
+                const response = await fetch('/api/schedule/employees');
+                if (!response.ok) throw new Error('Failed to load employees');
+                employees = await response.json();
+                
+                if (employees.length === 0) {
+                    document.getElementById('noEmployees').style.display = 'block';
+                } else {
+                    await renderAllEmployees();
+                }
+            } catch (error) {
+                showMessage('Error loading employees: ' + error.message, 'error');
+            }
+        }
+
+        async function renderAllEmployees() {
+            const container = document.getElementById('employeesContainer');
+            container.innerHTML = '';
+
+            for (const employee of employees) {
+                await renderEmployeeSchedule(employee);
+            }
+
+            document.getElementById('loadingMessage').style.display = 'none';
+        }
+
+        async function renderEmployeeSchedule(employee) {
+            const container = document.getElementById('employeesContainer');
+            
+            // Get employee's current pattern
+            const patternResponse = await fetch(`/api/schedule/pattern/${employee.id}`);
+            const patternData = await patternResponse.json();
+            const patternWeeks = patternData.pattern_weeks || 1;
+
+            // Create employee row
+            const employeeRow = document.createElement('div');
+            employeeRow.className = 'employee-row';
+            employeeRow.id = `employee-${employee.id}`;
+
+            // Employee header with pattern controls
+            const header = document.createElement('div');
+            header.className = 'employee-header';
+            header.innerHTML = `
+                <div class="employee-name">${employee.full_name || employee.username}</div>
+                <div class="pattern-controls">
+                    <label>Schedule Pattern:</label>
+                    <select id="pattern-${employee.id}" onchange="updateEmployeePattern(${employee.id})">
+                        ${[1,2,3,4].map(w => `<option value="${w}" ${w === patternWeeks ? 'selected' : ''}>${w} Week${w > 1 ? 's' : ''}</option>`).join('')}
+                    </select>
+                    <button onclick="applyPattern(${employee.id})">Apply</button>
+                    <div class="template-upload">
+                        <input type="file" id="template-${employee.id}" accept=".csv,.txt" style="display: none;" onchange="uploadTemplate(${employee.id}, this)">
+                        <button onclick="document.getElementById('template-${employee.id}').click()">Upload Template</button>
+                        <button onclick="downloadTemplate(${employee.id})">Download Template</button>
+                    </div>
+                </div>
+            `;
+
+            // Schedule table container
+            const scheduleDiv = document.createElement('div');
+            scheduleDiv.className = 'employee-schedule';
+            scheduleDiv.id = `schedule-${employee.id}`;
+
+            employeeRow.appendChild(header);
+            employeeRow.appendChild(scheduleDiv);
+            container.appendChild(employeeRow);
+
+            // Load and render this employee's schedule
+            await loadEmployeeSchedule(employee.id, patternWeeks);
+        }
+
+        async function loadEmployeeSchedule(employeeId, patternWeeks) {
+            try {
+                const monday = getMonday(currentWeek);
+                const weekStart = formatDate(monday);
+                
+                const response = await fetch(`/api/schedule/employee/${employeeId}/${weekStart}`);
+                if (!response.ok) throw new Error('Failed to load employee schedule');
+                
+                const data = await response.json();
+                renderEmployeeTable(employeeId, data.schedules, patternWeeks);
+                
+            } catch (error) {
+                showMessage(`Error loading schedule for employee: ${error.message}`, 'error');
+            }
+        }
+
+        function renderEmployeeTable(employeeId, schedules, patternWeeks) {
+            const container = document.getElementById(`schedule-${employeeId}`);
+            container.innerHTML = '';
+            
+            // Convert schedules array to lookup object
+            const scheduleMap = {};
+            schedules.forEach(schedule => {
+                const key = `${schedule.week_offset}_${schedule.day_of_week}`;
+                scheduleMap[key] = schedule;
+            });
+
+            const monday = getMonday(currentWeek);
+            
+            // Create a separate table for each week
+            for (let week = 0; week < patternWeeks; week++) {
+                const weekStart = new Date(monday);
+                weekStart.setDate(weekStart.getDate() + (week * 7));
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekEnd.getDate() + 6);
+
+                // Create table for this week
+                const table = document.createElement('table');
+                table.className = 'schedule-table';
+                table.style.marginBottom = '15px';
+                
+                // Create headers for this week
+                const thead = document.createElement('thead');
+                
+                // Week header row
+                const weekHeaderRow = document.createElement('tr');
+                const weekHeader = document.createElement('th');
+                weekHeader.colSpan = 7;
+                weekHeader.className = 'week-header';
+                weekHeader.style.backgroundColor = '#34495e';
+                weekHeader.style.color = 'white';
+                weekHeader.style.fontWeight = '600';
+                weekHeader.style.fontSize = '0.9em';
+                weekHeader.textContent = `Week ${week + 1}: ${formatDisplayDate(weekStart)} - ${formatDisplayDate(weekEnd)}`;
+                weekHeaderRow.appendChild(weekHeader);
+
+                // Day headers row
+                const dayHeaderRow = document.createElement('tr');
+                const dayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                for (let day = 0; day < 7; day++) {
+                    const dayDate = new Date(weekStart);
+                    dayDate.setDate(dayDate.getDate() + day);
+                    
+                    const dayHeader = document.createElement('th');
+                    dayHeader.textContent = `${dayNames[day]} ${formatDisplayDate(dayDate)}`;
+                    dayHeaderRow.appendChild(dayHeader);
+                }
+
+                thead.appendChild(weekHeaderRow);
+                thead.appendChild(dayHeaderRow);
+
+                // Create body for this week
+                const tbody = document.createElement('tbody');
+                const row = document.createElement('tr');
+
+                // Create cells for each day in this week
+                for (let day = 0; day < 7; day++) {
+                    const cell = document.createElement('td');
+                    cell.className = 'schedule-cell';
+                    cell.dataset.userId = employeeId;
+                    cell.dataset.week = week;
+                    cell.dataset.day = day;
+                    
+                    const scheduleKey = `${week}_${day}`;
+                    const schedule = scheduleMap[scheduleKey];
+                    
+                    if (schedule) {
+                        const shiftBlock = document.createElement('div');
+                        shiftBlock.className = `shift-block shift-${schedule.shift_type || 'day'}`;
+                        
+                        if (schedule.shift_type === 'leave') {
+                            shiftBlock.textContent = 'Day Off';
+                        } else {
+                            shiftBlock.textContent = `${schedule.shift_start_time} - ${schedule.shift_end_time}`;
+                        }
+                        
+                        cell.appendChild(shiftBlock);
+                    }
+                    
+                    // Add edit controls
+                    const editControls = document.createElement('div');
+                    editControls.className = 'edit-controls';
+                    editControls.innerHTML = `
+                        <button onclick="editShift(${employeeId}, ${week}, ${day})">Edit</button>
+                        <button class="clear-btn" onclick="clearShift(${employeeId}, ${week}, ${day})">Clear</button>
+                    `;
+                    cell.appendChild(editControls);
+                    
+                    // Add time inputs (hidden by default)
+                    const timeInputs = document.createElement('div');
+                    timeInputs.className = 'time-inputs';
+                    timeInputs.innerHTML = `
+                        <input type="time" class="start-time" value="${schedule ? schedule.shift_start_time : ''}">
+                        <input type="time" class="end-time" value="${schedule ? schedule.shift_end_time : ''}">
+                        <select class="shift-type">
+                            <option value="day" ${schedule && schedule.shift_type === 'day' ? 'selected' : ''}>Day Shift</option>
+                            <option value="night" ${schedule && schedule.shift_type === 'night' ? 'selected' : ''}>Night Shift</option>
+                            <option value="leave" ${schedule && schedule.shift_type === 'leave' ? 'selected' : ''}>Leave/Off</option>
+                        </select>
+                        <button onclick="saveShift(${employeeId}, ${week}, ${day})">Save</button>
+                        <button onclick="cancelEdit(${employeeId}, ${week}, ${day})">Cancel</button>
+                    `;
+                    cell.appendChild(timeInputs);
+                    
+                    // Show edit controls on hover
+                    cell.addEventListener('mouseenter', () => {
+                        if (!cell.querySelector('.time-inputs').style.display || cell.querySelector('.time-inputs').style.display === 'none') {
+                            editControls.style.display = 'block';
+                        }
+                    });
+                    
+                    cell.addEventListener('mouseleave', () => {
+                        if (!cell.classList.contains('editing')) {
+                            editControls.style.display = 'none';
+                        }
+                    });
+                    
+                    row.appendChild(cell);
+                }
+
+                tbody.appendChild(row);
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                
+                container.appendChild(table);
+            }
+        }
+
+        async function updateEmployeePattern(employeeId) {
+            const patternWeeks = parseInt(document.getElementById(`pattern-${employeeId}`).value);
+            
+            try {
+                const response = await fetch('/api/schedule/pattern', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: employeeId,
+                        patternWeeks: patternWeeks
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to update pattern');
+                
+                // Reload this employee's schedule
+                await loadEmployeeSchedule(employeeId, patternWeeks);
+                showMessage('Schedule pattern updated successfully', 'success');
+                
+            } catch (error) {
+                showMessage('Error updating pattern: ' + error.message, 'error');
+            }
+        }
+
+        async function applyPattern(employeeId) {
+            await updateEmployeePattern(employeeId);
+        }
+
+        async function uploadTemplate(employeeId, fileInput) {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const scheduleData = parseTemplateFile(text);
+                
+                if (scheduleData.length === 0) {
+                    showMessage('No valid schedule data found in template', 'error');
+                    return;
+                }
+
+                // Apply the template data to the employee's schedule
+                await applyTemplateToEmployee(employeeId, scheduleData);
+                showMessage(`Template uploaded successfully for ${file.name}`, 'success');
+                
+                // Clear the file input
+                fileInput.value = '';
+                
+            } catch (error) {
+                showMessage('Error uploading template: ' + error.message, 'error');
+            }
+        }
+
+        function parseTemplateFile(text) {
+            const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+            const scheduleData = [];
+            
+            for (let i = 1; i < lines.length; i++) { // Skip header line
+                const line = lines[i];
+                const parts = line.split(',').map(p => p.trim());
+                
+                if (parts.length >= 5) {
+                    const [week, day, startTime, endTime, shiftType] = parts;
+                    
+                    // Validate the data
+                    const weekNum = parseInt(week);
+                    const dayNum = parseInt(day);
+                    
+                    // Allow empty times for leave/off days
+                    if (!isNaN(weekNum) && !isNaN(dayNum) && 
+                        weekNum >= 0 && dayNum >= 0 && dayNum <= 6) {
+                        
+                        // For leave/off days, times can be empty
+                        if (shiftType === 'leave' || startTime === '' || endTime === '') {
+                            scheduleData.push({
+                                week: weekNum,
+                                day: dayNum,
+                                startTime: '',
+                                endTime: '',
+                                shiftType: 'leave'
+                            });
+                        } else if (startTime && endTime) {
+                            scheduleData.push({
+                                week: weekNum,
+                                day: dayNum,
+                                startTime: startTime,
+                                endTime: endTime,
+                                shiftType: shiftType || 'day'
+                            });
+                        }
+                    }
+                }
+            }
+            
+            return scheduleData;
+        }
+
+        async function applyTemplateToEmployee(employeeId, scheduleData) {
+            const currentMonday = getMonday(currentWeek);
+            
+            for (const shift of scheduleData) {
+                try {
+                    const weekStart = new Date(currentMonday);
+                    weekStart.setDate(weekStart.getDate() + (shift.week * 7));
+                    const weekStartStr = formatDate(weekStart);
+                    
+                    // Handle leave/off days
+                    if (shift.shiftType === 'leave' || (!shift.startTime || !shift.endTime)) {
+                        const response = await fetch('/api/schedule/update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: parseInt(employeeId),
+                                weekStart: weekStartStr,
+                                dayOfWeek: shift.day,
+                                shiftStartTime: '00:00',
+                                shiftEndTime: '00:00',
+                                shiftType: 'leave'
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            console.warn(`Failed to save leave day for week ${shift.week}, day ${shift.day}`);
+                        }
+                    } else {
+                        const response = await fetch('/api/schedule/update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                userId: parseInt(employeeId),
+                                weekStart: weekStartStr,
+                                dayOfWeek: shift.day,
+                                shiftStartTime: shift.startTime,
+                                shiftEndTime: shift.endTime,
+                                shiftType: shift.shiftType
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            console.warn(`Failed to save shift for week ${shift.week}, day ${shift.day}`);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error applying shift:', error);
+                }
+            }
+            
+            // Reload the employee's schedule
+            const patternResponse = await fetch(`/api/schedule/pattern/${employeeId}`);
+            const patternData = await patternResponse.json();
+            await loadEmployeeSchedule(employeeId, patternData.pattern_weeks || 1);
+        }
+
+        function downloadTemplate(employeeId) {
+            const employee = employees.find(emp => emp.id === employeeId);
+            const employeeName = employee ? (employee.full_name || employee.username) : 'Employee';
+            
+            // Create template content
+            const templateContent = `Week,Day,StartTime,EndTime,ShiftType
+0,0,08:00,16:00,day
+0,1,08:00,16:00,day
+0,2,08:00,16:00,day
+0,3,08:00,16:00,day
+0,4,08:00,16:00,day
+0,5,,,leave
+0,6,,,leave
+1,0,20:00,04:00,night
+1,1,20:00,04:00,night
+1,2,20:00,04:00,night
+1,3,20:00,04:00,night
+1,4,20:00,04:00,night
+1,5,,,leave
+1,6,,,leave`;
+
+            // Create and download the file
+            const blob = new Blob([templateContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${employeeName.replace(/\s+/g, '_')}_Schedule_Template.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('Template downloaded successfully', 'success');
+        }
+
+        function editShift(userId, week, day) {
+            const cell = document.querySelector(`[data-user-id="${userId}"][data-week="${week}"][data-day="${day}"]`);
+            const timeInputs = cell.querySelector('.time-inputs');
+            const editControls = cell.querySelector('.edit-controls');
+            
+            cell.classList.add('editing');
+            timeInputs.style.display = 'flex';
+            editControls.style.display = 'none';
+        }
+
+        function cancelEdit(userId, week, day) {
+            const cell = document.querySelector(`[data-user-id="${userId}"][data-week="${week}"][data-day="${day}"]`);
+            const timeInputs = cell.querySelector('.time-inputs');
+            const editControls = cell.querySelector('.edit-controls');
+            
+            cell.classList.remove('editing');
+            timeInputs.style.display = 'none';
+            editControls.style.display = 'none';
+        }
+
+        async function saveShift(userId, week, day) {
+            const cell = document.querySelector(`[data-user-id="${userId}"][data-week="${week}"][data-day="${day}"]`);
+            const startTime = cell.querySelector('.start-time').value;
+            const endTime = cell.querySelector('.end-time').value;
+            const shiftType = cell.querySelector('.shift-type').value;
+            
+            try {
+                const startMonday = getMonday(currentWeek);
+                const weekStart = new Date(startMonday);
+                weekStart.setDate(weekStart.getDate() + (week * 7));
+                const weekStartStr = formatDate(weekStart);
+                
+                // Handle leave/off days
+                if (shiftType === 'leave') {
+                    const response = await fetch('/api/schedule/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: parseInt(userId),
+                            weekStart: weekStartStr,
+                            dayOfWeek: parseInt(day),
+                            shiftStartTime: '00:00',
+                            shiftEndTime: '00:00',
+                            shiftType: 'leave'
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to save schedule');
+                    
+                    // Get current pattern and reload this employee's schedule
+                    const patternResponse = await fetch(`/api/schedule/pattern/${userId}`);
+                    const patternData = await patternResponse.json();
+                    await loadEmployeeSchedule(userId, patternData.pattern_weeks || 1);
+                    
+                    showMessage('Leave day saved successfully', 'success');
+                    
+                } else if (startTime && endTime) {
+                    const response = await fetch('/api/schedule/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            userId: parseInt(userId),
+                            weekStart: weekStartStr,
+                            dayOfWeek: parseInt(day),
+                            shiftStartTime: startTime,
+                            shiftEndTime: endTime,
+                            shiftType: shiftType
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to save schedule');
+                    
+                    // Get current pattern and reload this employee's schedule
+                    const patternResponse = await fetch(`/api/schedule/pattern/${userId}`);
+                    const patternData = await patternResponse.json();
+                    await loadEmployeeSchedule(userId, patternData.pattern_weeks || 1);
+                    
+                    showMessage('Schedule updated successfully', 'success');
+                    
+                } else {
+                    showMessage('Please enter both start and end times for work shifts', 'error');
+                }
+                
+            } catch (error) {
+                showMessage('Error saving schedule: ' + error.message, 'error');
+            }
+        }
+
+        async function clearShift(userId, week, day) {
+            if (!confirm('Are you sure you want to clear this shift?')) return;
+            
+            try {
+                const startMonday = getMonday(currentWeek);
+                const weekStart = new Date(startMonday);
+                weekStart.setDate(weekStart.getDate() + (week * 7));
+                const weekStartStr = formatDate(weekStart);
+                
+                const response = await fetch('/api/schedule/clear', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: parseInt(userId),
+                        weekStart: weekStartStr,
+                        dayOfWeek: parseInt(day)
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to clear schedule');
+                
+                // Get current pattern and reload this employee's schedule
+                const patternResponse = await fetch(`/api/schedule/pattern/${userId}`);
+                const patternData = await patternResponse.json();
+                await loadEmployeeSchedule(userId, patternData.pattern_weeks || 1);
+                
+                showMessage('Schedule cleared successfully', 'success');
+                
+            } catch (error) {
+                showMessage('Error clearing schedule: ' + error.message, 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const container = document.getElementById('messageContainer');
+            const div = document.createElement('div');
+            div.className = type === 'error' ? 'error-message' : 'success-message';
+            div.textContent = message;
+            container.appendChild(div);
+            
+            setTimeout(() => {
+                div.remove();
+            }, 5000);
+        }
+
+        // Navigation event listeners
+        document.getElementById('prevWeek').addEventListener('click', (e) => {
+            e.preventDefault();
+            currentWeek.setDate(currentWeek.getDate() - 7);
+            updateWeekDisplay();
+            renderAllEmployees();
+        });
+
+        document.getElementById('nextWeek').addEventListener('click', (e) => {
+            e.preventDefault();
+            currentWeek.setDate(currentWeek.getDate() + 7);
+            updateWeekDisplay();
+            renderAllEmployees();
+        });
+
+        document.getElementById('publishBtn').addEventListener('click', () => {
+            showMessage('All changes are automatically saved', 'success');
+        });
+
+        // Initialize
+        async function init() {
+            const today = new Date();
+            currentWeek = getMonday(today);
+            
+            updateWeekDisplay();
+            await loadEmployees();
+        }
+
+        init();
+    </script>
+</body>
+</html>

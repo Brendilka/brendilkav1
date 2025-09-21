@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --accent-green: #1abc9c;
+            --border-color: #ecf0f1;
+            --tag-red: #e74c3c;
+            --tag-orange: #f39c12;
+            --tag-blue: #3498db;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 900px; margin: 30px auto; }
+
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-green); }
+
+        .notification-list { list-style: none; padding: 0; margin: 0; }
+        .notification-item {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-left: 5px solid transparent;
+        }
+        .notification-item.unread { border-left-color: var(--tag-orange); font-weight: 500; }
+
+        .notification-icon { font-size: 1.8em; margin-right: 20px; color: var(--header-bg); }
+        .notification-content { flex-grow: 1; }
+        .notification-text { display: block; margin-bottom: 5px; }
+        .notification-meta { font-size: 0.85em; color: #7f8c8d; }
+        .notification-tag { font-size: 0.8em; padding: 3px 8px; border-radius: 12px; color: white; margin-left: 10px; }
+        .tag-exception { background-color: var(--tag-red); }
+        .tag-request { background-color: var(--tag-orange); }
+        .tag-info { background-color: var(--tag-blue); }
+
+        .notification-action { display: flex; gap: 10px; }
+        .notification-action a, .notification-action button {
+            background-color: var(--accent-green);
+            color: white;
+            padding: 8px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+            border: none;
+            cursor: pointer;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+        }
+        .notification-action a:hover, .notification-action button:hover { background-color: #16a085; }
+        .btn-danger { background-color: #c0392b; }
+        .btn-danger:hover { background-color: #a93226; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="../manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+
+    <div class="page-container">
+        <h2 class="section-title">My Notifications Center</h2>
+
+        <ul class="notification-list" id="notification-list">
+            <!-- *** STATIC PLACEHOLDERS RE-ADDED HERE *** -->
+            <li class="notification-item unread">
+                <i class="notification-icon fas fa-file-invoice-dollar"></i>
+                <div class="notification-content">
+                    <span class="notification-text">Timecard for Harry Brown requires review (Missed Punch).<span class="notification-tag tag-exception">Exception</span></span>
+                    <span class="notification-meta">Received: 5 minutes ago</span>
+                </div>
+                <div class="notification-action"><a href="#">Review Timecard</a></div>
+            </li>
+             <li class="notification-item">
+                <i class="notification-icon fas fa-exclamation-triangle"></i>
+                <div class="notification-content">
+                    <span class="notification-text">Project Alpha is trending over budget.<span class="notification-tag tag-exception">Budget Alert</span></span>
+                    <span class="notification-meta">Received: Yesterday</span>
+                </div>
+                <div class="notification-action"><a href="#">View Analytics</a></div>
+            </li>
+             <li class="notification-item">
+                <i class="notification-icon fas fa-info-circle"></i>
+                <div class="notification-content">
+                    <span class="notification-text">System Maintenance scheduled for Sunday at 2:00 AM.<span class="notification-tag tag-info">System</span></span>
+                    <span class="notification-meta">Received: 2 days ago</span>
+                </div>
+            </li>
+            <!-- Dynamic notifications will be prepended above this line by the script -->
+        </ul>
+    </div>
+
+    <script>
+        function handleAction(action, type, id) {
+            fetch(`/api/${type}/${id}/${action}`, {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message);
+                if (data.success) {
+                    location.reload();
+                }
+            })
+            .catch(err => {
+                console.error(`Error during ${action} ${type}:`, err);
+                alert(`An error occurred. Please try again.`);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const notificationList = document.getElementById('notification-list');
+
+            // Fetch pending leave requests
+            fetch('/api/leave-requests/pending', { credentials: 'include' })
+                .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+                .then(requests => {
+                    requests.forEach(request => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'notification-item unread';
+                        const reviewLink = `../my-team/teams-leave-approvals.html`;
+
+                        listItem.innerHTML = `
+                            <i class="notification-icon fas fa-plane-departure"></i>
+                            <div class="notification-content">
+                                <span class="notification-text">${request.full_name} has submitted a leave request.<span class="notification-tag tag-request">Leave</span></span>
+                                <span class="notification-meta">From: ${request.start_date} To: ${request.end_date}</span>
+                            </div>
+                            <div class="notification-action">
+                                <a href="${reviewLink}">Review</a>
+                            </div>
+                        `;
+                        notificationList.prepend(listItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching leave request notifications:', error));
+
+            // Fetch accepted shift swaps needing approval
+            fetch('/api/shift-swap/accepted', { credentials: 'include' })
+                .then(response => response.ok ? response.json() : Promise.reject(response.statusText))
+                .then(requests => {
+                    requests.forEach(request => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'notification-item unread';
+
+                        listItem.innerHTML = `
+                            <i class="notification-icon fas fa-exchange-alt"></i>
+                            <div class="notification-content">
+                                <span class="notification-text">A shift swap requires your approval.<span class="notification-tag tag-request">Shift Swap</span></span>
+                                <span class="notification-meta"><b>${request.requester_name}</b> wants to swap their shift (<i>${request.requester_shift}</i>) with <b>${request.accepter_name}</b>'s shift (<i>${request.requested_shift}</i>).</span>
+                            </div>
+                            <div class="notification-action">
+                                <button onclick="handleAction('approve', 'shift-swap', ${request.id})">Approve</button>
+                                <button class="btn-danger" onclick="handleAction('deny', 'shift-swap', ${request.id})">Deny</button>
+                            </div>
+                        `;
+                        notificationList.prepend(listItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching shift swap notifications:', error));
+        });
+    </script>
+</body>
+</html>

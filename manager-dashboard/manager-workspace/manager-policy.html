@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Policy Actions - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-blue: #3498db;
+            --accent-green: #2ecc71;
+            --border-color: #ecf0f1;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1000px; margin: 30px auto; }
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-blue); }
+
+        .policy-list { list-style: none; padding: 0; }
+        .policy-item {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            margin-bottom: 15px;
+        }
+        .policy-icon { font-size: 2em; color: var(--accent-blue); margin-right: 20px; }
+        .policy-details { flex-grow: 1; }
+        .policy-title { font-weight: 500; font-size: 1.1em; }
+        .policy-meta { font-size: 0.9em; color: #555; }
+
+        .policy-action a, .policy-status { padding: 8px 18px; text-decoration: none; border-radius: 5px; font-weight: 500; white-space: nowrap; }
+        .policy-action a { background-color: var(--accent-blue); color: white; transition: background-color 0.3s; }
+        .policy-action a:hover { background-color: #2980b9; }
+        .policy-status { background-color: var(--border-color); color: #7f8c8d; }
+        .policy-status .fa-check-circle { color: var(--accent-green); margin-right: 5px; }
+
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">Company Policies</h2>
+
+        <h3>Action Required</h3>
+        <ul class="policy-list">
+            <li class="policy-item">
+                <i class="policy-icon fas fa-file-signature"></i>
+                <div class="policy-details">
+                    <div class="policy-title">Updated Working From Home Policy</div>
+                    <div class="policy-meta">Version 2.1 - Effective Mar 1, 2025</div>
+                </div>
+                <div class="policy-action"><a href="#">Read & Acknowledge</a></div>
+            </li>
+        </ul>
+
+        <h3 style="margin-top: 40px;">Acknowledged Policies</h3>
+         <ul class="policy-list">
+            <li class="policy-item">
+                <i class="policy-icon fas fa-shield-alt"></i>
+                <div class="policy-details">
+                    <div class="policy-title">Data Security & Privacy</div>
+                    <div class="policy-meta">Acknowledged: Feb 15, 2025</div>
+                </div>
+                <div class="policy-status"><i class="fas fa-check-circle"></i>Completed</div>
+            </li>
+             <li class="policy-item">
+                <i class="policy-icon fas fa-book"></i>
+                <div class="policy-details">
+                    <div class="policy-title">Code of Conduct</div>
+                    <div class="policy-meta">Acknowledged: Jan 10, 2025</div>
+                </div>
+                <div class="policy-status"><i class="fas fa-check-circle"></i>Completed</div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

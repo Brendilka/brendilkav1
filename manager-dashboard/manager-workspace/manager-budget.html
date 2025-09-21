@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Analysis - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --accent-green: #27ae60;
+            --border-color: #ecf0f1;
+            --progress-bar-bg: #e0e0e0;
+            --progress-bar-ok: #2ecc71;
+            --progress-bar-warn: #f39c12;
+            --progress-bar-danger: #e74c3c;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1200px; margin: 30px auto; }
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-green); }
+
+        .summary-card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        .summary-card h3 { margin-top: 0; font-size: 1.4em; color: var(--header-bg); }
+        .budget-progress { margin-bottom: 15px; }
+        .progress-label { display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 8px; font-weight: 500; }
+        .progress-bar { width: 100%; background-color: var(--progress-bar-bg); border-radius: 8px; height: 16px; overflow: hidden; }
+        .progress-bar div { height: 100%; border-radius: 8px; }
+
+        .budget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .budget-detail-card { background: var(--card-bg); border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 20px; }
+        .budget-detail-card h4 { margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .budget-detail-card ul { list-style: none; padding: 0; }
+        .budget-detail-card li { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.95em; }
+        .budget-detail-card li span:first-child { font-weight: 500; }
+
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">Labor Budget Analysis</h2>
+
+        <div class="summary-card">
+            <h3>Overall Department Budget: Finance</h3>
+            <div class="budget-progress">
+                <div class="progress-label"><span>$16,500 / $20,000</span><span>82.5% Used</span></div>
+                <div class="progress-bar"><div style="width: 82.5%; background-color: var(--progress-bar-warn);"></div></div>
+            </div>
+        </div>
+
+        <h3>Breakdown by Cost Center</h3>
+        <div class="budget-grid">
+            <div class="budget-detail-card">
+                <h4>Cost Center: 700541 (Payroll)</h4>
+                <ul>
+                    <li><strong>Budget:</strong><span>$10,000.00</span></li>
+                    <li><strong>Actual Cost:</strong><span>$9,850.00</span></li>
+                    <li><strong>Variance:</strong><span style="color: green;">$150.00</span></li>
+                </ul>
+                <div class="progress-label"><span>98.5% Used</span></div>
+                <div class="progress-bar"><div style="width: 98.5%; background-color: var(--progress-bar-danger);"></div></div>
+            </div>
+            <div class="budget-detail-card">
+                <h4>Cost Center: 700600 (Accounts Payable)</h4>
+                 <ul>
+                    <li><strong>Budget:</strong><span>$5,000.00</span></li>
+                    <li><strong>Actual Cost:</strong><span>$4,150.00</span></li>
+                    <li><strong>Variance:</strong><span style="color: green;">$850.00</span></li>
+                </ul>
+                <div class="progress-label"><span>83% Used</span></div>
+                <div class="progress-bar"><div style="width: 83%; background-color: var(--progress-bar-warn);"></div></div>
+            </div>
+            <div class="budget-detail-card">
+                <h4>Cost Center: 700654 (Milling)</h4>
+                 <ul>
+                    <li><strong>Budget:</strong><span>$5,000.00</span></li>
+                    <li><strong>Actual Cost:</strong><span>$2,500.00</span></li>
+                    <li><strong>Variance:</strong><span style="color: green;">$2,500.00</span></li>
+                </ul>
+                <div class="progress-label"><span>50% Used</span></div>
+                <div class="progress-bar"><div style="width: 50%; background-color: var(--progress-bar-ok);"></div></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

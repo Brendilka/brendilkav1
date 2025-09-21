@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fatigue Management - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-orange: #e67e22;
+            --border-color: #ecf0f1;
+            --status-danger: #e74c3c;
+            --status-warn: #f39c12;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1200px; margin: 30px auto; }
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-orange); }
+
+        .fatigue-alert {
+            display: flex;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--status-danger);
+        }
+        .fatigue-alert.warning { border-left-color: var(--status-warn); }
+        .alert-icon { font-size: 2em; margin-right: 20px; }
+        .alert-icon.danger { color: var(--status-danger); }
+        .alert-icon.warning { color: var(--status-warn); }
+        .alert-details { flex-grow: 1; }
+        .alert-details .name { font-weight: 700; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">Team Fatigue & Policy Breaches</h2>
+
+        <div class="fatigue-alert">
+            <i class="alert-icon danger fas fa-exclamation-triangle"></i>
+            <div class="alert-details">
+                <span class="name">Harry Brown</span> has less than 10 hours rest between their shift ending today and starting tomorrow. (Policy Breach)
+            </div>
+            <a href="#" class="btn-view" style="background-color:var(--accent-orange);color:white;padding:8px 12px;border-radius:5px;text-decoration:none;">View Schedule</a>
+        </div>
+
+         <div class="fatigue-alert warning">
+            <i class="alert-icon warning fas fa-hourglass-half"></i>
+            <div class="alert-details">
+                <span class="name">Peter Jones</span> has worked 5 consecutive days and is scheduled for a 6th.
+            </div>
+            <a href="#" class="btn-view" style="background-color:var(--accent-orange);color:white;padding:8px 12px;border-radius:5px;text-decoration:none;">View Schedule</a>
+        </div>
+
+        <div class="fatigue-alert warning">
+            <i class="alert-icon warning fas fa-tachometer-alt"></i>
+            <div class="alert-details">
+                <span class="name">John Smith</span> has exceeded 45 worked hours for the week.
+            </div>
+            <a href="#" class="btn-view" style="background-color:var(--accent-orange);color:white;padding:8px 12px;border-radius:5px;text-decoration:none;">View Timecard</a>
+        </div>
+    </div>
+</body>
+</html>

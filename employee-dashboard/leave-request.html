@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request - Brendilka Time Manager</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Global Styles --- */
+        :root {
+            --primary-bg: #f4f7f6;
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --text-dark: #34495e;
+            --text-light: #ecf0f1;
+            --border-color: #e1e5e8;
+            --employee-accent: #3498db;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+        }
+
+        /* --- Header (Reused & Linked) --- */
+        .page-header {
+            background-color: var(--header-bg);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 5px solid var(--header-accent);
+        }
+        .page-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 400;
+        }
+        .page-header a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Main Page Layout --- */
+        .page-container {
+            width: 95%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .section-title {
+            font-size: 1.8em;
+            color: var(--header-bg);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--employee-accent);
+        }
+
+        /* --- Form Container Styling --- */
+        .leave-request-container {
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        /* --- Enhanced Balances Section --- */
+        .balances-header {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--header-bg);
+            margin-top: 0;
+            margin-bottom: 18px;
+            border-bottom: 2px solid var(--employee-accent);
+            padding-bottom: 10px;
+            position: relative;
+        }
+        
+        .balances-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .balance-item {
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            min-width: 120px;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+        }
+        
+        .balance-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            background-color: #fff;
+        }
+        
+        .balance-item .value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--employee-accent);
+            margin-bottom: 5px;
+        }
+        
+        .balance-item .label {
+            font-size: 0.85em;
+            color: #5d6d7e;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        #loadingBalances {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        #loadingBalances i {
+            color: var(--employee-accent);
+            margin-right: 8px;
+        }
+
+        /* --- Enhanced Form Styling --- */
+        .leave-form .form-group {
+            margin-bottom: 22px;
+        }
+        .leave-form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--header-bg);
+        }
+        .leave-form input,
+        .leave-form select,
+        .leave-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d9e6;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            color: var(--text-dark);
+            background-color: #fcfcfc;
+        }
+        .leave-form input:focus,
+        .leave-form select:focus,
+        .leave-form textarea:focus {
+            outline: none;
+            border-color: var(--employee-accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        .leave-form input:hover,
+        .leave-form select:hover,
+        .leave-form textarea:hover {
+            border-color: #b3c5d1;
+        }
+        .leave-form input[type="date"],
+        .leave-form input[type="time"] {
+            color: var(--text-dark);
+            min-height: 44px;
+        }
+        .leave-form select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 36px;
+            cursor: pointer;
+        }
+        .leave-form textarea {
+            min-height: 100px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        
+        /* Number input styling */
+        .leave-form input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+            text-align: center;
+        }
+        .leave-form input[type="number"]::-webkit-outer-spin-button,
+        .leave-form input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .date-inputs {
+            display: flex;
+            gap: 20px;
+        }
+        .date-inputs .form-group {
+            flex: 1;
+        }
+        
+        /* --- Enhanced Duration Options Styling --- */
+        #half-day-options, 
+        #hourly-options {
+            background-color: rgba(52, 152, 219, 0.05);
+            border-left: 3px solid var(--employee-accent);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 5px;
+            transition: all 0.3s ease;
+        }
+        
+
+        
+        /* Time duration inputs group */
+        #hourly-options .form-group > div {
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        
+        /* Hours calculation styling */
+        .hours-calculation-box {
+            background: linear-gradient(to right bottom, #f8f9fa, #f1f5f9);
+            padding: 18px;
+            border-radius: 8px;
+            border-left: 4px solid var(--employee-accent);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        
+        .hours-calculation-box #calculationDetails {
+            margin-bottom: 12px;
+            color: #5d6d7e;
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+        
+        .hours-calculation-box .total-hours {
+            font-weight: 600;
+            color: var(--header-bg);
+            font-size: 1.05em;
+            padding-top: 8px;
+            border-top: 1px dashed rgba(52, 152, 219, 0.3);
+        }
+        
+        .hours-calculation-box #totalHours {
+            color: var(--employee-accent);
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        /* Validation error styling */
+        #validationError {
+            background-color: #fdeaea;
+            color: #e74c3c;
+            padding: 12px 15px;
+            border-radius: 5px;
+            border-left: 4px solid #e74c3c;
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        #validationError::before {
+            content: '\f071';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            margin-right: 8px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Enhanced Submit Button --- */
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--employee-accent);
+            color: white;
+            font-size: 1.1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.15);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+            box-shadow: 0 6px 10px rgba(52, 152, 219, 0.25);
+            transform: translateY(-1px);
+        }
+        .submit-btn:active {
+            background-color: #2471a3;
+            box-shadow: 0 2px 5px rgba(52, 152, 219, 0.2);
+            transform: translateY(1px);
+        }
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        .submit-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.3;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+
+        /* --- NEW: History Table --- */
+        .history-container {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .history-container .section-title {
+            text-align: left;
+            border: none;
+            padding-bottom: 0;
+            margin-bottom: 20px;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .history-table th, .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .history-table th {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            color: white;
+            font-size: 0.85em;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+        .status-approved { background-color: #27ae60; }
+        .status-pending { background-color: #f39c12; }
+        .status-denied { background-color: #c0392b; }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .leave-request-container, .history-container { padding: 20px; }
+            .date-inputs { flex-direction: column; gap: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <a href="../employee-dashboard.html"><h1>Brendilka Time Manager</h1></a>
+    </header>
+
+    <div class="page-container">
+        <div class="leave-request-container">
+            <h2 class="section-title">Submit Leave Request</h2>
+            <h3 class="balances-header">My Current Balances</h3>
+            <div id="loadingBalances" style="text-align: center; padding: 20px; color: #666;">
+                <i class="fas fa-spinner fa-spin"></i> Loading your leave balances...
+            </div>
+            <div class="balances-grid" id="balancesGrid" style="display: none;">
+                <div class="balance-item">
+                    <div class="value" id="annualBalance">--</div>
+                    <div class="label">Annual Leave (Hrs)</div>
+                </div>
+                <div class="balance-item">
+                    <div class="value" id="sickBalance">--</div>
+                    <div class="label">Sick Leave (Hrs)</div>
+                </div>
+                <div class="balance-item">
+                    <div class="value" id="longServiceBalance">--</div>
+                    <div class="label">Long Service (Hrs)</div>
+                </div>
+            </div>
+
+            <form class="leave-form" id="leave-form">
+                <div class="form-group">
+                    <label for="leave-type">Leave Type</label>
+                    <select id="leave-type" name="leave_type" required>
+                        <option value="">-- Please Select --</option>
+                        <option value="annual">Annual Leave</option>
+                        <option value="sick">Sick / Personal Leave</option>
+                        <option value="unpaid">Leave Without Pay</option>
+                        <option value="long_service">Long Service Leave</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="date-inputs">
+                    <div class="form-group">
+                        <label for="start-date">Start Date</label>
+                        <input type="date" id="start-date" name="start_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date">End Date</label>
+                        <input type="date" id="end-date" name="end_date" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="leave-duration">Leave Duration</label>
+                    <select id="leave-duration" name="leave_duration" required>
+                        <option value="full_day" selected>Full Day</option>
+                        <option value="half_day">Half Day</option>
+                        <option value="hourly">Hourly</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="half-day-options" style="display: none;">
+                    <label for="half-day-period">Half Day Period</label>
+                    <select id="half-day-period" name="half_day_period">
+                        <option value="AM">Morning (First Half)</option>
+                        <option value="PM">Afternoon (Second Half)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="hourly-options" style="display: none;">
+                    <label for="hourly-duration">Duration</label>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div style="display: flex; align-items: center;">
+                            <input type="number" id="hourly-duration-hours" name="hourly_duration_hours" min="0" max="8" value="1" style="width: 60px;">
+                            <span style="margin: 0 5px;">hours</span>
+                        </div>
+                        <div style="display: flex; align-items: center;">
+                            <input type="number" id="hourly-duration-minutes" name="hourly_duration_minutes" min="0" max="59" value="0" step="5" style="width: 60px;">
+                            <span style="margin: 0 5px;">minutes</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <label for="hourly-start-time">Start Time</label>
+                        <input type="time" id="hourly-start-time" name="hourly_start_time" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="hoursCalculation" style="display: none;">
+                    <label>Hours Calculation</label>
+                    <div class="hours-calculation-box">
+                        <div id="calculationDetails"></div>
+                        <div class="total-hours">
+                            Total Hours Required: <span id="totalHours">0</span> hours
+                        </div>
+                    </div>
+                    <input type="hidden" id="hours-requested" name="hours_requested" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label for="comments">Comments (Optional)</label>
+                    <textarea id="comments" name="comments" placeholder="E.g., Family vacation, Medical appointment"></textarea>
+                </div>
+
+                <div id="validationError" style="display: none; color: #e74c3c; margin-bottom: 15px; padding: 10px; background: #ffeaea; border-radius: 5px;"></div>
+
+                <button type="submit" class="submit-btn">Submit Request</button>
+            </form>
+        </div>
+
+        <!-- *** NEW: History section added *** -->
+        <div class="history-container">
+            <h2 class="section-title">Recent Request History</h2>
+            <table class="history-table">
+                <thead>
+                    <tr>
+                        <th>Dates</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="history-table-body">
+                    <!-- History rows will be inserted here by JavaScript -->
+                </tbody>
+            </table>
+            <p id="no-history-message" style="display: none; text-align: center; color: #555;">You have no recent leave requests.</p>
+        </div>
+    </div>
+
+    <!-- *** UPDATED: Script now handles real leave balances and validation *** -->
+    <script>
+        let currentUserId = null;
+        let leaveBalances = null;
+        let workPattern = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('leave-form');
+            const historyTableBody = document.getElementById('history-table-body');
+            const noHistoryMsg = document.getElementById('no-history-message');
+            const historyTable = document.querySelector('.history-table');
+
+            // Initialize page
+            init();
+
+            async function init() {
+                try {
+                    await getCurrentUser();
+                    await loadLeaveBalances();
+                    await loadWorkPattern();
+                    fetchAndDisplayHistory();
+                    setupDateChangeListeners();
+                } catch (error) {
+                    console.error('Initialization error:', error);
+                }
+            }
+
+            // Get current user
+            async function getCurrentUser() {
+                try {
+                    const response = await fetch('/api/user/current');
+                    if (!response.ok) throw new Error('Not logged in');
+                    const user = await response.json();
+                    currentUserId = user.id;
+                    return user;
+                } catch (error) {
+                    console.error('Error getting current user:', error);
+                    throw error;
+                }
+            }
+
+            // Load work pattern for hours calculation
+            async function loadWorkPattern() {
+                try {
+                    const response = await fetch(`/api/schedule/work-pattern/${currentUserId}`);
+                    if (!response.ok) throw new Error('Failed to fetch work pattern');
+                    
+                    const data = await response.json();
+                    workPattern = data;
+                    
+                    console.log('Work pattern loaded:', workPattern);
+                } catch (error) {
+                    console.error('Error loading work pattern:', error);
+                    workPattern = { success: false, workDays: [] };
+                }
+            }
+
+            // Setup date change listeners
+            function setupDateChangeListeners() {
+                const startDateInput = document.getElementById('start-date');
+                const endDateInput = document.getElementById('end-date');
+                const leaveDurationSelect = document.getElementById('leave-duration');
+                const halfDayPeriodSelect = document.getElementById('half-day-period');
+                const hourlyDurationHoursInput = document.getElementById('hourly-duration-hours');
+                const hourlyDurationMinutesInput = document.getElementById('hourly-duration-minutes');
+                const hourlyStartTimeInput = document.getElementById('hourly-start-time');
+                
+                // Start date change handler
+                startDateInput.addEventListener('change', function() {
+                    // For half-day or hourly leave, sync end date with start date
+                    const leaveDuration = leaveDurationSelect.value;
+                    if ((leaveDuration === 'half_day' || leaveDuration === 'hourly') && this.value) {
+                        endDateInput.value = this.value;
+                    }
+                    calculateHours();
+                });
+                
+                // End date change handler
+                endDateInput.addEventListener('change', calculateHours);
+                
+                leaveDurationSelect.addEventListener('change', function() {
+                    const halfDayOptions = document.getElementById('half-day-options');
+                    const hourlyOptions = document.getElementById('hourly-options');
+                    
+                    // Hide all specific options first
+                    halfDayOptions.style.display = 'none';
+                    hourlyOptions.style.display = 'none';
+                    
+                    if (this.value === 'half_day' || this.value === 'hourly') {
+                        // Show the appropriate options section
+                        if (this.value === 'half_day') {
+                            halfDayOptions.style.display = 'block';
+                        } else {
+                            hourlyOptions.style.display = 'block';
+                        }
+                        
+                        // For half-day or hourly leave, always set end date = start date
+                        if (startDateInput.value) {
+                            endDateInput.value = startDateInput.value;
+                        }
+                    }
+                    
+                    calculateHours();
+                });
+                
+                // Half day option change
+                halfDayPeriodSelect.addEventListener('change', calculateHours);
+                
+                // Hourly duration changes (hours)
+                hourlyDurationHoursInput.addEventListener('change', function() {
+                    // Validate hours input
+                    let hours = parseInt(this.value);
+                    if (isNaN(hours) || hours < 0) {
+                        this.value = 0;
+                    } else if (hours > 8) {
+                        this.value = 8;
+                    }
+                    calculateHours();
+                });
+                
+                // Hourly duration changes (minutes)
+                hourlyDurationMinutesInput.addEventListener('change', function() {
+                    // Validate minutes input
+                    let minutes = parseInt(this.value);
+                    if (isNaN(minutes) || minutes < 0) {
+                        this.value = 0;
+                    } else if (minutes > 59) {
+                        this.value = 55;
+                    } else {
+                        // Round to nearest 5 minutes
+                        const roundedMinutes = Math.round(minutes / 5) * 5;
+                        if (roundedMinutes > 55) this.value = 55;
+                        else this.value = roundedMinutes;
+                    }
+                    calculateHours();
+                });
+                
+                // Start time change
+                hourlyStartTimeInput.addEventListener('change', calculateHours);
+            }
+
+            // Calculate hours based on selected dates and work pattern
+            function calculateHours() {
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+                const hoursCalculationDiv = document.getElementById('hoursCalculation');
+                const calculationDetailsDiv = document.getElementById('calculationDetails');
+                const totalHoursSpan = document.getElementById('totalHours');
+                const hoursInput = document.getElementById('hours-requested');
+                const leaveDuration = document.getElementById('leave-duration').value;
+                const halfDayPeriod = document.getElementById('half-day-period').value;
+                const hourlyDurationHours = document.getElementById('hourly-duration-hours')?.value || 0;
+                const hourlyDurationMinutes = document.getElementById('hourly-duration-minutes')?.value || 0;
+                const hourlyStartTime = document.getElementById('hourly-start-time')?.value || '';
+
+                if (!startDate || !endDate) {
+                    hoursCalculationDiv.style.display = 'none';
+                    hoursInput.value = 0;
+                    return;
+                }
+
+                // For full day leave (spanning multiple days), start date must be before or equal to end date
+                if (leaveDuration === 'full_day' && new Date(startDate) > new Date(endDate)) {
+                    showValidationError('End date must be after or equal to start date');
+                    hoursCalculationDiv.style.display = 'none';
+                    hoursInput.value = 0;
+                    return;
+                }
+                
+                // For half day or hourly leave, ensure start date equals end date
+                if ((leaveDuration === 'half_day' || leaveDuration === 'hourly') && startDate !== endDate) {
+                    showValidationError(`${leaveDuration === 'half_day' ? 'Half day' : 'Hourly'} leave can only be requested for a single day`);
+                    document.getElementById('end-date').value = startDate;
+                    return;
+                }
+                
+                // For hourly leave, ensure start time is provided
+                if (leaveDuration === 'hourly' && !hourlyStartTime) {
+                    showValidationError('Please specify the start time for hourly leave');
+                    hoursCalculationDiv.style.display = 'none';
+                    hoursInput.value = 0;
+                    return;
+                }
+
+                if (!workPattern || !workPattern.success) {
+                    showValidationError('Unable to calculate hours - work schedule not found');
+                    hoursCalculationDiv.style.display = 'none';
+                    hoursInput.value = 0;
+                    return;
+                }
+
+                const calculation = calculateWorkHours(
+                    startDate, 
+                    endDate, 
+                    workPattern, 
+                    leaveDuration, 
+                    halfDayPeriod,
+                    hourlyDuration,
+                    hourlyStartTime
+                );
+                
+                // Display calculation details based on leave duration type
+                if (leaveDuration === 'half_day') {
+                    calculationDetailsDiv.innerHTML = `
+                        <div><strong>Date:</strong> ${formatDateForDisplay(startDate)}</div>
+                        <div><strong>Duration:</strong> Half Day (${halfDayPeriod === 'AM' ? 'Morning' : 'Afternoon'})</div>
+                        <div><strong>Work Days:</strong> 0.5</div>
+                    `;
+                } else if (leaveDuration === 'hourly') {
+                    // Calculate total hours including minutes
+                    const hours = parseInt(hourlyDurationHours) || 0;
+                    const minutes = parseInt(hourlyDurationMinutes) || 0;
+                    const totalHourlyDuration = hours + (minutes / 60);
+                    
+                    // Format display string
+                    let durationDisplay = '';
+                    if (hours > 0) {
+                        durationDisplay += `${hours} hour${hours !== 1 ? 's' : ''}`;
+                    }
+                    if (minutes > 0) {
+                        durationDisplay += `${hours > 0 ? ' and ' : ''}${minutes} minute${minutes !== 1 ? 's' : ''}`;
+                    }
+                    if (!durationDisplay) durationDisplay = '0 hours';
+                    
+                    calculationDetailsDiv.innerHTML = `
+                        <div><strong>Date:</strong> ${formatDateForDisplay(startDate)}</div>
+                        <div><strong>Duration:</strong> ${durationDisplay}</div>
+                        <div><strong>Start Time:</strong> ${formatTimeForDisplay(hourlyStartTime)}</div>
+                        <div><strong>Work Days:</strong> ${(totalHourlyDuration / 8).toFixed(2)} (equivalent)</div>
+                    `;
+                } else {
+                    calculationDetailsDiv.innerHTML = `
+                        <div><strong>Date Range:</strong> ${formatDateForDisplay(startDate)} to ${formatDateForDisplay(endDate)}</div>
+                        <div><strong>Total Days:</strong> ${calculation.totalDays}</div>
+                        <div><strong>Work Days:</strong> ${calculation.workDays}</div>
+                        <div><strong>Non-work Days:</strong> ${calculation.nonWorkDays} (weekends/off days - not deducted)</div>
+                    `;
+                }
+                
+                totalHoursSpan.textContent = calculation.totalHours.toFixed(1);
+                hoursInput.value = calculation.totalHours;
+                hoursCalculationDiv.style.display = 'block';
+                
+                hideValidationError();
+                
+                // Re-validate with new hours
+                const leaveType = document.getElementById('leave-type').value;
+                if (leaveType) {
+                    validateLeaveRequest(leaveType, calculation.totalHours);
+                }
+            }
+            
+            // Helper function to format time for display
+            function formatTimeForDisplay(timeStr) {
+                if (!timeStr) return '';
+                try {
+                    const [hours, minutes] = timeStr.split(':');
+                    const date = new Date();
+                    date.setHours(parseInt(hours, 10));
+                    date.setMinutes(parseInt(minutes, 10));
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                } catch (e) {
+                    return timeStr;
+                }
+            }
+
+            // Calculate work hours for a date range
+            function calculateWorkHours(
+                startDate, 
+                endDate, 
+                pattern, 
+                leaveDuration = 'full_day', 
+                halfDayPeriod = 'AM',
+                hourlyDurationHours = 0,
+                hourlyDurationMinutes = 0,
+                hourlyStartTime = ''
+            ) {
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
+                
+                let totalHours = 0;
+                let workDays = 0;
+                let nonWorkDays = 0;
+                
+                // Hourly leave - specific number of hours and minutes on a single day
+                if (leaveDuration === 'hourly' && startDate === endDate) {
+                    // Parse hourly duration inputs
+                    const hours = parseInt(hourlyDurationHours) || 0;
+                    const minutes = parseInt(hourlyDurationMinutes) || 0;
+                    const requestedHours = hours + (minutes / 60);
+                    
+                    if (requestedHours > 0) {
+                        totalHours = requestedHours;
+                        workDays = requestedHours / 8; // Calculate equivalent workdays
+                    }
+                }
+                // Half-day special case - only handles one day
+                else if (leaveDuration === 'half_day' && startDate === endDate) {
+                    const d = new Date(startDate);
+                    const dayOfWeek = d.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                    
+                    // Calculate which week in the pattern this corresponds to
+                    const weeksSinceEpoch = Math.floor(d.getTime() / (7 * 24 * 60 * 60 * 1000));
+                    const patternWeekIndex = weeksSinceEpoch % pattern.patternWeeks;
+                    
+                    // Find the work schedule for this day
+                    const daySchedule = pattern.workDays.find(wd => 
+                        wd.dayOfWeek === dayOfWeek && wd.weekOffset === patternWeekIndex
+                    );
+                    
+                    if (daySchedule && daySchedule.shiftType !== 'leave' && daySchedule.hours > 0) {
+                        // For half day, use half the normal hours
+                        totalHours = daySchedule.hours / 2;
+                        workDays = 0.5;
+                    } else {
+                        nonWorkDays = 1;
+                    }
+                } 
+                // Full day calculation (multiple days possible)
+                else {
+                    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                        const dayOfWeek = d.getDay(); // 0 = Sunday, 1 = Monday, etc.
+                        
+                        // Calculate which week in the pattern this corresponds to
+                        const weeksSinceEpoch = Math.floor(d.getTime() / (7 * 24 * 60 * 60 * 1000));
+                        const patternWeekIndex = weeksSinceEpoch % pattern.patternWeeks;
+                        
+                        // Find the work schedule for this day
+                        const daySchedule = pattern.workDays.find(wd => 
+                            wd.dayOfWeek === dayOfWeek && wd.weekOffset === patternWeekIndex
+                        );
+                        
+                        if (daySchedule && daySchedule.shiftType !== 'leave' && daySchedule.hours > 0) {
+                            totalHours += daySchedule.hours;
+                            workDays++;
+                        } else {
+                            nonWorkDays++;
+                        }
+                    }
+                }
+                
+                // Calculate total days based on leave duration type
+                let totalDays;
+                if (leaveDuration === 'half_day') {
+                    totalDays = 0.5;
+                } else if (leaveDuration === 'hourly') {
+                    const hours = parseInt(hourlyDurationHours) || 0;
+                    const minutes = parseInt(hourlyDurationMinutes) || 0;
+                    const totalHourlyDuration = hours + (minutes / 60);
+                    totalDays = totalHourlyDuration / 8; // Convert hours to equivalent days
+                } else {
+                    totalDays = Math.round((end - start) / oneDay) + 1;
+                }
+                
+                return {
+                    totalDays,
+                    workDays,
+                    nonWorkDays,
+                    totalHours
+                };
+            }
+
+            function formatDateForDisplay(dateStr) {
+                const date = new Date(dateStr);
+                return date.toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    year: 'numeric', 
+                    month: 'short', 
+                    day: 'numeric' 
+                });
+            }
+
+            // Load leave balances
+            async function loadLeaveBalances() {
+                try {
+                    const response = await fetch(`/api/leave-balances/${currentUserId}`);
+                    if (!response.ok) throw new Error('Failed to fetch leave balances');
+                    
+                    const data = await response.json();
+                    leaveBalances = data.balance;
+                    
+                    if (leaveBalances) {
+                        document.getElementById('annualBalance').textContent = parseFloat(leaveBalances.annual_leave).toFixed(1);
+                        document.getElementById('sickBalance').textContent = parseFloat(leaveBalances.sick_leave).toFixed(1);
+                        document.getElementById('longServiceBalance').textContent = parseFloat(leaveBalances.long_service_leave).toFixed(1);
+                        
+                        document.getElementById('loadingBalances').style.display = 'none';
+                        document.getElementById('balancesGrid').style.display = 'flex';
+                    } else {
+                        throw new Error('No leave balance found');
+                    }
+                } catch (error) {
+                    console.error('Error loading leave balances:', error);
+                    document.getElementById('loadingBalances').innerHTML = 
+                        '<span style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Unable to load leave balances</span>';
+                }
+            }
+
+            // Validate leave request
+            function validateLeaveRequest(leaveType, hoursRequested) {
+                const hours = parseFloat(hoursRequested);
+                const errorDiv = document.getElementById('validationError');
+                
+                if (!leaveBalances) {
+                    showValidationError('Unable to validate request - leave balances not loaded');
+                    return false;
+                }
+
+                if (hours <= 0) {
+                    showValidationError('No work hours found for selected dates. Please check your schedule or select different dates.');
+                    return false;
+                }
+
+                // Check if sufficient balance exists (except for unpaid leave)
+                if (leaveType !== 'unpaid' && leaveType !== 'other') {
+                    let availableHours = 0;
+                    let leaveTypeName = '';
+                    
+                    switch (leaveType) {
+                        case 'annual':
+                            availableHours = leaveBalances.annual_leave;
+                            leaveTypeName = 'Annual Leave';
+                            break;
+                        case 'sick':
+                            availableHours = leaveBalances.sick_leave;
+                            leaveTypeName = 'Sick Leave';
+                            break;
+                        case 'long_service':
+                            availableHours = leaveBalances.long_service_leave;
+                            leaveTypeName = 'Long Service Leave';
+                            break;
+                    }
+                    
+                    if (hours > availableHours) {
+                        showValidationError(`Insufficient ${leaveTypeName} balance. Required: ${hours.toFixed(1)} hours, Available: ${availableHours.toFixed(1)} hours`);
+                        return false;
+                    }
+                }
+
+                hideValidationError();
+                return true;
+            }
+
+            function showValidationError(message) {
+                const errorDiv = document.getElementById('validationError');
+                
+                // Reset animation to trigger it again
+                errorDiv.style.animation = 'none';
+                errorDiv.offsetHeight; // Trigger reflow
+                errorDiv.style.animation = 'fadeIn 0.3s ease';
+                
+                errorDiv.innerHTML = message;
+                errorDiv.style.display = 'block';
+            }
+
+            function hideValidationError() {
+                document.getElementById('validationError').style.display = 'none';
+            }
+
+            // --- Function to fetch and display history ---
+            function fetchAndDisplayHistory() {
+                fetch('/api/leave-requests/history', { credentials: 'include' })
+                    .then(res => {
+                        if (!res.ok) throw new Error('Could not fetch history');
+                        return res.json();
+                    })
+                    .then(history => {
+                        historyTableBody.innerHTML = ''; // Clear previous entries
+                        if (history.length === 0) {
+                            noHistoryMsg.style.display = 'block';
+                            historyTable.style.display = 'none';
+                        } else {
+                            noHistoryMsg.style.display = 'none';
+                            historyTable.style.display = 'table';
+                            history.forEach(request => {
+                                const row = document.createElement('tr');
+                                const statusClass = `status-${request.status.toLowerCase()}`;
+                                const statusBadge = `<span class="status-badge ${statusClass}">${request.status}</span>`;
+
+                                // Format date display, adding half day or hourly indicators if applicable
+                                let dateDisplay = request.start_date;
+                                if (request.start_date !== request.end_date) {
+                                    dateDisplay += ` to ${request.end_date}`;
+                                } else if (request.leave_duration === 'half_day') {
+                                    dateDisplay += ` (${request.half_day_period === 'AM' ? 'Morning' : 'Afternoon'})`;
+                                } else if (request.leave_duration === 'hourly') {
+                                    let durationDisplay = '';
+                                    const hours = parseInt(request.hourly_duration_hours) || 0;
+                                    const minutes = parseInt(request.hourly_duration_minutes) || 0;
+                                    
+                                    if (hours > 0) {
+                                        durationDisplay += `${hours}h`;
+                                    }
+                                    if (minutes > 0) {
+                                        durationDisplay += `${hours > 0 ? ' ' : ''}${minutes}m`;
+                                    }
+                                    
+                                    dateDisplay += ` (${durationDisplay} at ${request.hourly_start_time})`;
+                                }
+                                
+                                row.innerHTML = `
+                                    <td>${dateDisplay}</td>
+                                    <td>${formatLeaveType(request.leave_type)} ${request.hours_requested ? `(${request.hours_requested}h)` : ''}</td>
+                                    <td>${statusBadge}</td>
+                                `;
+                                historyTableBody.appendChild(row);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching leave history:', error);
+                        noHistoryMsg.textContent = 'Could not load request history.';
+                        noHistoryMsg.style.display = 'block';
+                        historyTable.style.display = 'none';
+                    });
+            }
+
+            function formatLeaveType(type) {
+                const typeMap = {
+                    'annual': 'Annual Leave',
+                    'sick': 'Sick Leave', 
+                    'unpaid': 'Unpaid Leave',
+                    'long_service': 'Long Service Leave',
+                    'other': 'Other'
+                };
+                return typeMap[type] || type;
+            }
+
+            // --- Event listener for the form submission ---
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+                
+                // Get calculated hours instead of manual input
+                const calculatedHours = document.getElementById('totalHours').textContent;
+                if (!calculatedHours || calculatedHours === '0.0') {
+                    showValidationError('Please select valid dates with work hours');
+                    return;
+                }
+                
+                // Replace manual hours with calculated hours
+                data.hours_requested = parseFloat(calculatedHours);
+
+                // Validate date range for full day leave
+                if (data.leave_duration === 'full_day') {
+                    if (new Date(data.start_date) > new Date(data.end_date)) {
+                        showValidationError('End date must be after or equal to start date');
+                        return;
+                    }
+                }
+                
+                // Check half day and hourly validation
+                if (data.leave_duration === 'half_day' || data.leave_duration === 'hourly') {
+                    if (data.start_date !== data.end_date) {
+                        showValidationError(`${data.leave_duration === 'half_day' ? 'Half day' : 'Hourly'} leave can only be requested for a single day`);
+                        return;
+                    }
+                    
+                    if (data.leave_duration === 'hourly') {
+                        if (!data.hourly_start_time) {
+                            showValidationError('Please specify a start time for hourly leave');
+                            return;
+                        }
+                        
+                        const hours = parseInt(data.hourly_duration_hours) || 0;
+                        const minutes = parseInt(data.hourly_duration_minutes) || 0;
+                        const totalDuration = hours + (minutes / 60);
+                        
+                        if (totalDuration <= 0) {
+                            showValidationError('Please enter a valid duration (at least 5 minutes)');
+                            return;
+                        }
+                        
+                        if (totalDuration > 8) {
+                            showValidationError('Total duration cannot exceed 8 hours');
+                            return;
+                        }
+                    }
+                }
+                
+                // Validate the request
+                if (!validateLeaveRequest(data.leave_type, data.hours_requested)) {
+                    return;
+                }
+
+                fetch('/api/leave-request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('Leave request submitted successfully!');
+                        form.reset();
+                        document.getElementById('hoursCalculation').style.display = 'none';
+                        hideValidationError();
+                        loadLeaveBalances(); // Refresh balances
+                        fetchAndDisplayHistory(); // Refresh history after submission
+                    } else {
+                        alert(`Error: ${result.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting leave request:', error);
+                    alert('A network error occurred. Please try again.');
+                });
+            });
+
+            // Real-time validation when leave type changes
+            document.getElementById('leave-type').addEventListener('change', function() {
+                const calculatedHours = document.getElementById('totalHours').textContent;
+                if (this.value && calculatedHours && calculatedHours !== '0.0') {
+                    validateLeaveRequest(this.value, parseFloat(calculatedHours));
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

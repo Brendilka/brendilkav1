@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Team - Brendilka Time Manager</title>
+
+    <!-- Roboto Font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Global Styles --- */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .page-container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* --- Header --- */
+        .page-header {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 5px solid #1abc9c;
+            width: 100%;
+        }
+
+        .page-header a { /* Added for clickable header */
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 400;
+            letter-spacing: 1px;
+            line-height: 1.3;
+        }
+        .page-header h1 br { display: block; }
+
+        /* --- Page Specific Content Styling --- */
+        .people-content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .people-item-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #e67e22; /* People link base color */
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            text-align: center;
+            border-radius: 15px;
+            padding: 25px 20px;
+            min-height: 150px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            word-break: break-word;
+        }
+
+        .people-item-link:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: #d35400; /* Darker orange on hover */
+        }
+
+        .people-item-link i {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        /* --- Page Title --- */
+        .section-title {
+            width: 100%;
+            text-align: center;
+            font-size: 1.8em;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #e67e22; /* Accent color for this section */
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 1.9em; }
+            .people-content-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 15px;
+            }
+            .people-item-link {
+                padding: 20px 15px;
+                min-height: 130px;
+                font-size: 0.95em;
+            }
+            .people-item-link i {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+            .section-title { font-size: 1.6em; }
+        }
+
+        @media (max-width: 480px) {
+            .page-container { padding: 0 10px; }
+            .page-header h1 { font-size: 1.7em; }
+             .people-content-grid {
+                grid-template-columns: 1fr;
+            }
+            .people-item-link {
+                min-height: 100px;
+                font-size: 0.9em;
+            }
+             .people-item-link i {
+                font-size: 1.6em;
+            }
+            .section-title { font-size: 1.4em; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <!-- UPDATED: Link goes up one level to the main manager dashboard -->
+        <a href="../manager-dashboard.html">
+             <h1>Brendilka Time Manager</h1>
+        </a>
+    </header>
+
+    <div class="page-container">
+        <h2 class="section-title">My Team Management</h2>
+
+        <div class="people-content-grid">
+            <!-- ALL LINKS UPDATED TO POINT TO THE 'my-team' SUBFOLDER -->
+            <a href="my-team/teams-workforce-planning.html" class="people-item-link">
+                <i class="fas fa-users-cog"></i>
+                Teams Workforce Planning
+            </a>
+            <a href="my-team/teams-schedule-maintenance.html" class="people-item-link">
+                <i class="fas fa-calendar-check"></i>
+                Teams Schedule Maintenance
+            </a>
+            <a href="my-team/teams-attendance-management.html" class="people-item-link">
+                <i class="fas fa-user-clock"></i>
+                Teams Attendance Management
+            </a>
+            <a href="my-team/teams-timecards-management.html" class="people-item-link">
+                <i class="fas fa-file-invoice-dollar"></i>
+                Teams Timecards Management
+            </a>
+            <a href="my-team/teams-leave-balances.html" class="people-item-link">
+                <i class="fas fa-balance-scale-right"></i>
+                Teams Leave Balances
+            </a>
+            <a href="my-team/teams-leave-approvals.html" class="people-item-link">
+                <i class="fas fa-thumbs-up"></i>
+                Teams Leave Approvals
+            </a>
+            <a href="my-team/teams-leave-calendar.html" class="people-item-link">
+                <i class="fas fa-calendar-week"></i>
+                Teams Leave Calendar
+            </a>
+            <a href="my-team/teams-fatigue-management.html" class="people-item-link">
+                <i class="fas fa-bed"></i>
+                Teams Fatigue Management
+            </a>
+            <a href="my-team/teams-skills-maintenance.html" class="people-item-link">
+                <i class="fas fa-award"></i>
+                Teams Skills Maintenance
+            </a>
+            <a href="my-team/teams-approved-overtime.html" class="people-item-link">
+                <i class="fas fa-user-plus"></i>
+                Teams Approved Overtime
+            </a>
+            <a href="my-team/teams-overtime-budget-analysis.html" class="people-item-link">
+                <i class="fas fa-search-dollar"></i>
+                Teams Overtime Budget Analysis
+            </a>
+            <a href="my-team/teams-kpi-metrics.html" class="people-item-link">
+                <i class="fas fa-tachometer-alt"></i>
+                Teams KPI Metrics
+            </a>
+            <a href="my-team/teams-documents.html" class="people-item-link">
+                <i class="fas fa-folder-open"></i>
+                Teams Documents
+            </a>
+            <a href="my-team/teams-transactional-workflow.html" class="people-item-link">
+                <i class="fas fa-tasks"></i>
+                Teams Transactional Workflow
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

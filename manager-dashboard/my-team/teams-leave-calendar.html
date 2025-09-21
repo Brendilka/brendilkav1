@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Leave Calendar - Brendilka</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-orange: #e67e22;
+            --border-color: #ecf0f1;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1400px; margin: 30px auto; }
+        .calendar-container { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .calendar-header h2 { margin: 0; font-size: 1.5em; }
+        .calendar-nav a { padding: 8px 15px; text-decoration: none; color: var(--accent-orange); font-weight: 500; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .calendar-day { border: 1px solid var(--border-color); min-height: 120px; padding: 8px; }
+        .day-number { font-weight: 500; }
+        .other-month .day-number { color: #ccc; }
+        .leave-entry { font-size: 0.8em; padding: 3px 6px; border-radius: 4px; color: white; margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <a href="#" class="calendar-nav"><i class="fas fa-chevron-left"></i> February</a>
+                <h2>March 2025</h2>
+                <a href="#" class="calendar-nav">April <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="calendar-grid">
+                <!-- Day headers -->
+                <div class="day-header" style="text-align:center;font-weight:bold;">Sun</div><div class="day-header" style="text-align:center;font-weight:bold;">Mon</div><div class="day-header" style="text-align:center;font-weight:bold;">Tue</div><div class="day-header" style="text-align:center;font-weight:bold;">Wed</div><div class="day-header" style="text-align:center;font-weight:bold;">Thu</div><div class="day-header" style="text-align:center;font-weight:bold;">Fri</div><div class="day-header" style="text-align:center;font-weight:bold;">Sat</div>
+
+                <!-- Calendar days would be dynamically generated, this is a static example -->
+                <div class="calendar-day other-month"><div class="day-number">23</div></div>
+                <div class="calendar-day other-month"><div class="day-number">24</div></div>
+                <!-- ... -->
+                <div class="calendar-day"><div class="day-number">10</div><div class="leave-entry" style="background-color:#3498db;">Jane Doe</div></div>
+                <div class="calendar-day"><div class="day-number">11</div><div class="leave-entry" style="background-color:#3498db;">Jane Doe</div></div>
+                <div class="calendar-day"><div class="day-number">12</div><div class="leave-entry" style="background-color:#3498db;">Jane Doe</div><div class="leave-entry" style="background-color:#9b59b6;">Peter Jones</div></div>
+                <div class="calendar-day"><div class="day-number">13</div><div class="leave-entry" style="background-color:#3498db;">Jane Doe</div></div>
+                <div class="calendar-day"><div class="day-number">14</div><div class="leave-entry" style="background-color:#e74c3c;">John Smith</div><div class="leave-entry" style="background-color:#3498db;">Jane Doe</div></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

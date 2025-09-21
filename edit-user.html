@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User - Brendilka Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Roboto', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { background-color: white; padding: 40px; border-radius: 15px; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); max-width: 800px; margin: auto; }
+        h1 { color: #2c3e50; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .full-width { grid-column: 1 / -1; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; color: #34495e; }
+        input, select { width: 100%; padding: 10px 12px; border: 1px solid #bdc3c7; border-radius: 8px; font-size: 1em; box-sizing: border-box; }
+        .btn { display: inline-block; padding: 12px 20px; border: none; border-radius: 8px; color: white; font-size: 1em; font-weight: 700; cursor: pointer; text-decoration: none; }
+        .btn-save { background-color: #1abc9c; margin-right: 10px; }
+        .btn-cancel { background-color: #7f8c8d; }
+        .role-fields { padding-top: 15px; border-top: 2px solid #f4f7f6; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Edit User Details</h1>
+
+        <form id="edit-form" method="POST">
+             <div class="form-grid">
+                <!-- Common Fields for All Roles -->
+                <div class="form-group full-width">
+                    <label for="role">Role</label>
+                    <select id="role" name="role" required onchange="toggleRoleFields()"><option value="employee">Employee</option><option value="manager">Manager</option></select>
+                </div>
+                <div class="form-group"><label for="username">Username / Login ID</label><input type="text" id="username" name="username" required></div>
+                <div class="form-group"><label for="password">New Password (leave blank to keep current)</label><input type="password" id="password" name="password"></div>
+                <div class="form-group"><label for="full_name">Full Name</label><input type="text" id="full_name" name="full_name" required></div>
+                <div class="form-group"><label for="employee_id">Employee ID</label><input type="text" id="employee_id" name="employee_id" required></div>
+                <div class="form-group"><label for="home_address">Home Address</label><input type="text" id="home_address" name="home_address"></div>
+                <div class="form-group"><label for="phone_number">Personal Phone</label><input type="text" id="phone_number" name="phone_number"></div>
+                <div class="form-group"><label for="job_title">Job Title</label><input type="text" id="job_title" name="job_title"></div>
+                <div class="form-group"><label for="department">Department</label><input type="text" id="department" name="department"></div>
+                <div class="form-group"><label for="emergency_contact_name">Emergency Contact Name</label><input type="text" id="emergency_contact_name" name="emergency_contact_name"></div>
+                <div class="form-group"><label for="emergency_contact_phone">Emergency Contact Phone</label><input type="text" id="emergency_contact_phone" name="emergency_contact_phone"></div>
+            </div>
+
+            <!-- Role-Specific Fields -->
+            <div id="employee-fields" class="role-fields form-grid">
+                 <div class="form-group full-width"><label for="manager_name">Manager's Name</label><input type="text" id="manager_name" name="manager_name"></div>
+            </div>
+
+            <div id="manager-fields" class="role-fields form-grid" style="display: none;">
+                <div class="form-group"><label for="personal_email">Personal Email</label><input type="email" id="personal_email" name="personal_email"></div>
+                <div class="form-group"><label for="site_location">Site / Location</label><input type="text" id="site_location" name="site_location"></div>
+                <div class="form-group"><label for="job_grade">Job Grade</label><input type="text" id="job_grade" name="job_grade"></div>
+                <div class="form-group full-width"><label for="business_email">Business Email</label><input type="email" id="business_email" name="business_email"></div>
+            </div>
+
+            <button type="submit" class="btn btn-save">Save Changes</button>
+            <a href="/admin.html" class="btn btn-cancel">Cancel</a>
+        </form>
+    </div>
+
+    <script>
+        function toggleRoleFields() {
+            const role = document.getElementById('role').value;
+            // Disable inputs that are NOT part of the selected role
+            document.getElementById('manager_name').disabled = (role !== 'employee');
+            document.getElementById('personal_email').disabled = (role !== 'manager');
+            document.getElementById('site_location').disabled = (role !== 'manager');
+            document.getElementById('job_grade').disabled = (role !== 'manager');
+            document.getElementById('business_email').disabled = (role !== 'manager');
+
+            // Toggle visibility of the role-specific sections
+            document.getElementById('employee-fields').style.display = role === 'employee' ? 'grid' : 'none';
+
+            // *** THIS LINE IS NOW FIXED ***
+            document.getElementById('manager-fields').style.display = role === 'manager' ? 'grid' : 'none';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('edit-form');
+            const params = new URLSearchParams(window.location.search);
+            const userId = params.get('id');
+
+            if (!userId) {
+                document.querySelector('.container').innerHTML = '<h1>Error: No User ID provided.</h1><a href="/admin.html">Return to Admin Panel</a>';
+                return;
+            }
+
+            form.action = `/update-user/${userId}`;
+
+            fetch(`/api/user/${userId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data) return;
+
+                    const setVal = (id, value) => {
+                        const el = document.getElementById(id);
+                        if (el) el.value = value || '';
+                    };
+
+                    // Set values for all fields
+                    setVal('username', data.username);
+                    setVal('role', data.role);
+                    setVal('full_name', data.full_name);
+                    setVal('employee_id', data.employee_id);
+                    setVal('job_title', data.job_title);
+                    setVal('department', data.department);
+                    setVal('manager_name', data.manager_name);
+                    setVal('emergency_contact_name', data.emergency_contact_name);
+                    setVal('emergency_contact_phone', data.emergency_contact_phone);
+                    setVal('home_address', data.home_address);
+                    setVal('phone_number', data.phone_number);
+                    setVal('personal_email', data.personal_email);
+                    setVal('site_location', data.site_location);
+                    setVal('job_grade', data.job_grade);
+                    setVal('business_email', data.business_email);
+
+                    // Call the corrected function to set the initial form state
+                    toggleRoleFields();
+                })
+                .catch(err => console.error("Fetch error:", err));
+        });
+    </script>
+</body>
+</html>

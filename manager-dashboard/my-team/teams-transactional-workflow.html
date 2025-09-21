@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactional Workflow - Brendilka</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-orange: #e67e22;
+            --border-color: #ecf0f1;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1200px; margin: 30px auto; }
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-orange); }
+
+        .data-table-container { overflow-x: auto; background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table .action-icon { font-size: 1.2em; color: var(--accent-orange); margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">My Recent Transactional Workflow</h2>
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead><tr><th>Date & Time</th><th>Action</th><th>Target</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td>11/03/2025 10:15 AM</td><td><i class="action-icon fas fa-file-invoice-dollar"></i>Timecard Approved</td><td>Peter Jones</td><td>Complete</td></tr>
+                    <tr><td>11/03/2025 09:30 AM</td><td><i class="action-icon fas fa-thumbs-up"></i>Leave Request Approved</td><td>Harry Brown</td><td>Complete</td></tr>
+                    <tr><td>10/03/2025 16:00 PM</td><td><i class="action-icon fas fa-calendar-check"></i>Weekly Schedule Published</td><td>Finance Team</td><td>Complete</td></tr>
+                    <tr><td>10/03/2025 11:00 AM</td><td><i class="action-icon fas fa-file-signature"></i>Policy Acknowledged</td><td>Updated WFH Policy</td><td>Complete</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

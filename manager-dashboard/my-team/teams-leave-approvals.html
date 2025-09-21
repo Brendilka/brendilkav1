@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Approvals - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --accent-orange: #e67e22;
+            --accent-green: #27ae60;
+            --accent-red: #c0392b;
+            --border-color: #ecf0f1;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1000px; margin: 30px auto; }
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-orange); }
+
+        .request-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 20px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+        }
+        .request-icon { font-size: 2.5em; color: var(--accent-orange); }
+        .request-details .name { font-weight: 700; font-size: 1.2em; }
+        .request-details .dates { font-size: 1em; }
+        .request-details .meta { font-size: 0.9em; color: #555; }
+
+        .request-actions { display: flex; gap: 10px; }
+        .btn-action { border: none; padding: 10px 20px; border-radius: 5px; color: white; font-weight: 700; cursor: pointer; }
+        .btn-approve { background-color: var(--accent-green); }
+        .btn-deny { background-color: var(--accent-red); }
+    </style>
+</head>
+<body>
+    <!-- *** UPDATED: Corrected relative path *** -->
+    <header class="page-header"><a href="../../manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+
+    <div class="page-container">
+        <h2 class="section-title">Pending Leave Approvals</h2>
+
+        <!-- *** UPDATED: Container for dynamic request cards *** -->
+        <div id="requests-container">
+            <!-- Static content removed, will be populated by JS -->
+        </div>
+
+        <p id="no-requests-message" style="display: none; text-align: center; color: #555;">There are currently no pending leave requests.</p>
+
+    </div>
+
+    <!-- *** NEW: Script to fetch and manage leave requests *** -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('requests-container');
+            const noRequestsMsg = document.getElementById('no-requests-message');
+
+            function fetchAndDisplayRequests() {
+                fetch('/api/leave-requests/pending')
+                    .then(res => res.json())
+                    .then(requests => {
+                        container.innerHTML = ''; // Clear existing content
+                        if (requests.length === 0) {
+                            noRequestsMsg.style.display = 'block';
+                        } else {
+                            noRequestsMsg.style.display = 'none';
+                            requests.forEach(createRequestCard);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error fetching requests:", err);
+                        container.innerHTML = `<p style="color:red; text-align:center;">Could not load leave requests. Please try again later.</p>`;
+                    });
+            }
+
+            function createRequestCard(request) {
+                const card = document.createElement('div');
+                card.className = 'request-card';
+                card.dataset.requestId = request.id; // Store ID on the element
+
+                // Use different icons based on leave type
+                const iconClass = request.leave_type.toLowerCase().includes('sick') 
+                    ? 'fas fa-pills' 
+                    : 'fas fa-plane-departure';
+
+                card.innerHTML = `
+                    <i class="request-icon ${iconClass}"></i>
+                    <div class="request-details">
+                        <div class="name">${request.full_name}</div>
+                        <div class="dates"><strong>Dates:</strong> ${request.start_date} to ${request.end_date}</div>
+                        <div class="meta"><strong>Type:</strong> ${request.leave_type} | <strong>Comments:</strong> ${request.comments || 'None'}</div>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn-action btn-approve" data-action="approve">Approve</button>
+                        <button class="btn-action btn-deny" data-action="deny">Deny</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+
+            // Handle button clicks using event delegation
+            container.addEventListener('click', function(event) {
+                const target = event.target;
+                if (target.tagName === 'BUTTON' && target.dataset.action) {
+                    const card = target.closest('.request-card');
+                    const requestId = card.dataset.requestId;
+                    const action = target.dataset.action; // 'approve' or 'deny'
+
+                    handleRequestAction(requestId, action, card);
+                }
+            });
+
+            function handleRequestAction(id, action, cardElement) {
+                fetch(`/api/leave-requests/${id}/${action}`, { method: 'POST' })
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success) {
+                            alert(`Request has been ${action}d.`);
+                            cardElement.remove(); // Remove the card from the UI
+                            // Check if any requests are left
+                            if (container.children.length === 0) {
+                                noRequestsMsg.style.display = 'block';
+                            }
+                        } else {
+                            alert(`Error: ${result.message}`);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(`Error with ${action} action:`, err);
+                        alert(`A network error occurred. Could not ${action} the request.`);
+                    });
+            }
+
+            // Initial load
+            fetchAndDisplayRequests();
+        });
+    </script>
+</body>
+</html>

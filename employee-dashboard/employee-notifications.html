@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notifications - Brendilka Time Manager</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --header-bg: #2c3e50; --header-accent: #1abc9c; --employee-accent: #3498db; }
+        *, *::before, *::after { box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f7f6; }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; margin-bottom: 30px; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+        .page-container { width: 95%; max-width: 900px; margin: 20px auto; }
+        .section-title { font-size: 1.8em; color: var(--header-bg); margin-bottom: 25px; padding-bottom: 10px; border-bottom: 3px solid var(--employee-accent); }
+        .notifications-list { list-style: none; padding: 0; margin: 0; }
+        .notification-item { display: flex; align-items: flex-start; background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-left: 5px solid #ccc; }
+        .notification-item.type-success { border-left-color: #27ae60; }
+        .notification-item.type-alert { border-left-color: #c0392b; }
+        .notification-item.type-info { border-left-color: var(--employee-accent); }
+        .notification-icon { font-size: 1.8em; margin-right: 20px; color: #7f8c8d; }
+        .type-success .notification-icon { color: #27ae60; }
+        .type-alert .notification-icon { color: #c0392b; }
+        .type-info .notification-icon { color: var(--employee-accent); }
+        .notification-content { flex-grow: 1; }
+        .notification-title { font-weight: 700; margin: 0 0 5px 0; }
+        .notification-message { margin: 0; color: #555; }
+        .notification-date { font-size: 0.8em; color: #7f8c8d; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="employee-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">My Notifications</h2>
+        <ul class="notifications-list">
+            <li class="notification-item type-success">
+                <div class="notification-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-title">Leave Request Approved</p>
+                    <p class="notification-message">Your request for Annual Leave from 2025-04-10 to 2025-04-12 has been approved.</p>
+                    <p class="notification-date">March 10, 2025 - 02:45 PM</p>
+                </div>
+            </li>
+            <li class="notification-item type-alert">
+                <div class="notification-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-title">Timecard Exception</p>
+                    <p class="notification-message">Your timecard for March 13, 2025 has a "Missed Punch" exception. Please correct it before the end of the pay period.</p>
+                    <p class="notification-date">March 14, 2025 - 08:00 AM</p>
+                </div>
+            </li>
+            <li class="notification-item type-info">
+                <div class="notification-icon"><i class="fas fa-info-circle"></i></div>
+                <div class="notification-content">
+                    <p class="notification-title">System Update</p>
+                    <p class="notification-message">A scheduled system maintenance will occur this Sunday at 2:00 AM. The system will be unavailable for approximately 1 hour.</p>
+                    <p class="notification-date">March 09, 2025 - 11:00 AM</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Shift Swaps - Brendilka</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root { --header-bg: #2c3e50; --header-accent: #1abc9c; --employee-accent: #3498db; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f7f6; }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+        .page-container { width: 95%; max-width: 1100px; margin: 20px auto; }
+        .section-title { font-size: 1.8em; color: var(--header-bg); margin-bottom: 25px; padding-bottom: 10px; border-bottom: 3px solid var(--employee-accent); }
+        h3 { color: var(--header-bg); margin-top: 30px; }
+        .data-table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.07); margin-bottom: 30px; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        .btn { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: 700; }
+        .btn-sm { padding: 5px 10px; }
+        .btn-success { background-color: #27ae60; } .btn-danger { background-color: #c0392b; }
+        .btn-primary { background-color: var(--employee-accent); }
+
+        /* UPDATED: Form grid is now responsive */
+        .form-container {
+            margin-bottom: 20px; 
+            padding: 20px; 
+            background: #fff; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+        }
+        .form-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; 
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group.full-span {
+             grid-column: 1 / -1;
+        }
+        .form-group label { margin-bottom: 8px; font-weight: 500; }
+        .form-group input, .form-group select { width: 100%; padding: 10px; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; font-family: inherit; font-size: 1em;}
+        .form-submit-group {
+            grid-column: 1 / -1;
+            text-align: right;
+            margin-top: 10px;
+        }
+
+        /* Styles for status badges */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            font-weight: 500;
+            color: #fff;
+            text-transform: capitalize;
+            display: inline-block;
+        }
+        .status-approved { background-color: #27ae60; }
+        .status-denied { background-color: #c0392b; }
+        .status-pending, .status-accepted { background-color: #f39c12; }
+
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="../employee-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">My Shift Swaps</h2>
+
+        <h3>Request a New Shift Swap</h3>
+        <div class="form-container">
+            <form id="shift-swap-form">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="my-shift-start">My Shift Start</label>
+                        <input type="datetime-local" id="my-shift-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="my-shift-end">My Shift End</label>
+                        <input type="datetime-local" id="my-shift-end" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="requested-shift-start">Requested Shift Start</label>
+                        <input type="datetime-local" id="requested-shift-start" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="requested-shift-end">Requested Shift End</label>
+                        <input type="datetime-local" id="requested-shift-end" required>
+                    </div>
+                    <div class="form-group full-span">
+                        <label for="with-colleague">With Colleague (Optional)</label>
+                        <select id="with-colleague">
+                            <option value="">All Colleagues</option>
+                        </select>
+                    </div>
+                    <div class="form-submit-group">
+                        <button type="submit" class="btn btn-primary">Submit Request</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <h3>My Outgoing Requests</h3>
+        <table class="data-table">
+            <thead><tr><th>My Shift</th><th>Requested Shift</th><th>With Colleague</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="outgoing-requests-body">
+            </tbody>
+        </table>
+
+        <h3>Available Swaps Offered to Me</h3>
+        <table class="data-table">
+            <thead><tr><th>Colleague's Shift</th><th>Their Requested Shift</th><th>From</th><th>Action</th></tr></thead>
+            <tbody id="available-swaps-body">
+            </tbody>
+        </table>
+
+        <h3>Recent Swap History</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>My Role</th>
+                    <th>My Shift</th>
+                    <th>Colleague's Shift</th>
+                    <th>Colleague</th>
+                    <th>Final Status</th>
+                </tr>
+            </thead>
+            <tbody id="swap-history-body">
+            </tbody>
+        </table>
+
+    </div>
+    <script>
+        /**
+         * Formats an ISO datetime string into a more readable format.
+         * e.g., "2025-07-21T09:00" -> "Mon, Jul 21, 09:00"
+         * @param {string} isoString The ISO string from a datetime-local input.
+         * @returns {string} A formatted date-time string.
+         */
+        function formatDateTime(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false };
+            return date.toLocaleString('en-US', options);
+        }
+
+        /**
+         * Formats an ISO datetime string into just the time.
+         * e.g., "2025-07-21T17:00" -> "17:00"
+         * @param {string} isoString The ISO string from a datetime-local input.
+         * @returns {string} A formatted time string.
+         */
+        function formatTime(isoString) {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            const options = { hour: '2-digit', minute: '2-digit', hour12: false };
+            return date.toLocaleTimeString('en-US', options);
+        }
+
+        function fetchShiftSwaps() {
+            const outgoingRequestsTable = document.getElementById('outgoing-requests-body');
+            const availableSwapsTable = document.getElementById('available-swaps-body');
+
+            fetch('/api/shift-swap/requests', { credentials: 'include' })
+                .then(response => response.json())
+                .then(data => {
+                    outgoingRequestsTable.innerHTML = '';
+                    if (data.outgoing && data.outgoing.length > 0) {
+                        data.outgoing.forEach(request => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${request.requester_shift}</td>
+                                <td>${request.requested_shift}</td>
+                                <td>${request.with_colleague || 'All Colleagues'}</td>
+                                <td><span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span></td>
+                                <td>
+                                    ${request.status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="withdrawRequest(${request.id})">Withdraw</button>` : 'No action'}
+                                </td>
+                            `;
+                            outgoingRequestsTable.appendChild(row);
+                        });
+                    } else {
+                        outgoingRequestsTable.innerHTML = '<tr><td colspan="5">You have no outgoing shift swap requests.</td></tr>';
+                    }
+
+                    availableSwapsTable.innerHTML = '';
+                     if (data.available && data.available.length > 0) {
+                        data.available.forEach(request => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${request.requester_shift}</td>
+                                <td>${request.requested_shift}</td>
+                                <td>${request.from_colleague}</td>
+                                <td>
+                                    <button class="btn btn-success btn-sm" onclick="acceptSwap(${request.id})">Accept</button>
+                                </td>
+                            `;
+                            availableSwapsTable.appendChild(row);
+                        });
+                    } else {
+                         availableSwapsTable.innerHTML = '<tr><td colspan="4">There are no shift swaps available to you right now.</td></tr>';
+                    }
+                })
+                .catch(error => console.error('Fetch shift swap requests error:', error));
+        }
+
+        function fetchSwapHistory() {
+            const historyTableBody = document.getElementById('swap-history-body');
+            fetch('/api/shift-swap/history', { credentials: 'include' })
+                .then(res => {
+                    if (!res.ok) throw new Error("Could not fetch history");
+                    return res.json();
+                })
+                .then(history => {
+                    historyTableBody.innerHTML = '';
+                    if (history && history.length > 0) {
+                        history.forEach(swap => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${swap.my_role}</td>
+                                <td>${swap.my_shift}</td>
+                                <td>${swap.colleague_shift || 'N/A'}</td>
+                                <td>${swap.colleague_name || 'N/A'}</td>
+                                <td><span class="status-badge status-${swap.status.toLowerCase()}">${swap.status}</span></td>
+                            `;
+                            historyTableBody.appendChild(row);
+                        });
+                    } else {
+                        historyTableBody.innerHTML = '<tr><td colspan="5">No completed shift swap history found.</td></tr>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch swap history error:', error);
+                    historyTableBody.innerHTML = '<tr><td colspan="5">Could not load history.</td></tr>';
+                });
+        }
+
+        function acceptSwap(id) {
+            if (!confirm('Are you sure you want to accept this shift swap? It will be sent to your manager for final approval.')) return;
+
+            fetch(`/api/shift-swap/${id}/accept`, {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+                if (result.success) {
+                    fetchShiftSwaps();
+                    fetchSwapHistory(); // Refresh history
+                }
+            });
+        }
+
+        function withdrawRequest(id) {
+            if (!confirm('Are you sure you want to withdraw this shift swap request?')) return;
+
+             fetch(`/api/shift-swap/${id}/withdraw`, {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert(result.message);
+                if (result.success) {
+                    fetchShiftSwaps();
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const colleagueSelect = document.getElementById('with-colleague');
+
+            fetch('/api/colleagues', { credentials: 'include' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Not logged in or server error');
+                    return response.json();
+                })
+                .then(users => {
+                    users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.value = user.id;
+                        option.textContent = `${user.full_name} (${user.username})`;
+                        colleagueSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching colleagues:', error));
+
+            fetchShiftSwaps();
+            fetchSwapHistory();
+
+            document.getElementById('shift-swap-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const myShiftStart = document.getElementById('my-shift-start').value;
+                const myShiftEnd = document.getElementById('my-shift-end').value;
+                const requestedShiftStart = document.getElementById('requested-shift-start').value;
+                const requestedShiftEnd = document.getElementById('requested-shift-end').value;
+
+                if (new Date(myShiftEnd) <= new Date(myShiftStart) || new Date(requestedShiftEnd) <= new Date(requestedShiftStart)) {
+                    alert('Error: The end time of a shift must be after its start time.');
+                    return;
+                }
+
+                // Format the dates into strings for submission
+                const requesterShiftString = `${formatDateTime(myShiftStart)} - ${formatTime(myShiftEnd)}`;
+                const requestedShiftString = `${formatDateTime(requestedShiftStart)} - ${formatTime(requestedShiftEnd)}`;
+
+                const data = {
+                    requester_shift: requesterShiftString,
+                    requested_shift: requestedShiftString,
+                    requested_with_id: document.getElementById('with-colleague').value || null
+                };
+
+                fetch('/api/shift-swap/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    alert(result.message);
+                    if (result.success) {
+                        fetchShiftSwaps();
+                        this.reset();
+                    }
+                })
+                .catch(error => console.error('Shift swap request submission error:', error));
+            });
+        });
+    </script>
+</body>
+</html>

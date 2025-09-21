@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timecard - Brendilka Time Manager</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --text-secondary: #555;
+            --accent-dark-blue: #34495e;
+            --border-color: #ecf0f1;
+            --exception-bg: #e74c3c;
+            --pending-bg: #f39c12;
+            --approved-bg: #2ecc71;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); color: var(--text-primary); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+        .page-container { width: 98%; max-width: 1600px; margin: 20px auto; padding: 0 15px; }
+
+        .timecard-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+        }
+        .timecard-header .user-info { font-size: 1.1em; }
+        .timecard-header .user-info strong { color: var(--header-bg); }
+        .timecard-header .period-nav { display: flex; align-items: center; gap: 10px; }
+        .timecard-header .period-nav a, .timecard-header .status-badge { padding: 8px 15px; border-radius: 5px; text-decoration: none; color: white; font-weight: 500; }
+        .timecard-header .period-nav a { background-color: var(--accent-dark-blue); }
+        .timecard-header .status-badge { background-color: var(--pending-bg); font-size: 1em; }
+
+        .timecard-table-container { overflow-x: auto; background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
+        .data-table thead th { background-color: #f8f9fa; color: var(--text-secondary); font-weight: 500; }
+        .data-table tbody tr:hover { background-color: #f1f1f1; }
+        .exception { background-color: var(--exception-bg); color: white; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
+
+        .totals-section { margin-top: 25px; }
+        .totals-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .totals-card h3 { margin-top: 0; color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; }
+        .totals-table { width: 100%; }
+        .totals-table td { padding: 8px; }
+
+        @media (max-width: 768px) {
+            .timecard-header { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+
+    <div class="page-container">
+        <div class="timecard-header">
+            <div class="user-info">
+                <strong>John Smith</strong> (ID: 1200546) - Senior Pay Clerk
+            </div>
+            <div class="period-nav">
+                <a href="#"><i class="fas fa-chevron-left"></i> Prev</a>
+                <span><strong>Pay Period:</strong> 10/03/2025 - 16/03/2025</span>
+                <a href="#">Next <i class="fas fa-chevron-right"></i></a>
+            </div>
+            <div class="status-badge">
+                <i class="fas fa-hourglass-half"></i> PENDING
+            </div>
+        </div>
+
+        <div class="timecard-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Schedule</th>
+                        <th>Actual Punches</th>
+                        <th>Unpaid Break</th>
+                        <th>Worked Hrs</th>
+                        <th>Leave Type</th>
+                        <th>Leave Hrs</th>
+                        <th>Exceptions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Mon 10/03</td><td>09:00 - 17:06</td><td>08:58 - 17:04</td><td>0.30</td><td>7.36</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td>Tue 11/03</td><td>09:00 - 17:06</td><td>08:59 - 18:30</td><td>0.30</td><td>8.06</td><td>-</td><td>-</td><td class="exception">Overtime</td></tr>
+                    <tr><td>Wed 12/03</td><td>09:00 - 17:06</td><td>09:00 - 14:30</td><td>0.30</td><td>5.36</td><td>Sick</td><td>2.60</td><td>-</td></tr>
+                    <tr><td>Thu 13/03</td><td>09:00 - 17:06</td><td>08:57 - </td><td>0.30</td><td>-</td><td>-</td><td>-</td><td class="exception">No Punch Out</td></tr>
+                    <tr><td>Fri 14/03</td><td>09:00 - 17:06</td><td>-</td><td>-</td><td>-</td><td>Annual Leave</td><td>7.36</td><td>-</td></tr>
+                    <tr><td>Sat 15/03</td><td>Not Rostered</td><td>10:00 - 14:00</td><td>-</td><td>4.00</td><td>-</td><td>-</td><td class="exception">Unrostered</td></tr>
+                    <tr><td>Sun 16/03</td><td>Not Rostered</td><td>Not Rostered</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="totals-section">
+            <div class="totals-card">
+                <h3>Pay Period To Date Totals (Decimal Hours)</h3>
+                <table class="totals-table">
+                    <tr><td><strong>Ordinary:</strong></td><td>30.40 hrs</td><td><strong>Overtime (1.5x):</strong></td><td>3.00 hrs</td></tr>
+                    <tr><td><strong>Sick Leave:</strong></td><td>2.60 hrs</td><td><strong>Overtime (2.0x):</strong></td><td>1.00 hrs</td></tr>
+                    <tr><td><strong>Annual Leave:</strong></td><td>7.60 hrs</td><td><strong>Allowances:</strong></td><td>Tea Money</td></tr>
+                    <tr><td><strong>Unallocated:</strong></td><td style="color:red;">7.60 hrs</td><td><strong>Total Paid:</strong></td><td><strong>44.60 hrs</strong></td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

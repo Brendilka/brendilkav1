@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Timecard - Brendilka Time Manager</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* --- Global Styles --- */
+        :root {
+            --primary-bg: #f4f7f6;
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --text-dark: #34495e;
+            --text-light: #ecf0f1;
+            --border-color: #e1e5e8;
+            --exception-ok: #27ae60;
+            --exception-alert: #c0392b;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+
+        /* --- Header (Reused & Linked) --- */
+        .page-header {
+            background-color: var(--header-bg);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 5px solid var(--header-accent);
+            width: 100%;
+        }
+        .page-header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 400;
+        }
+        .page-header a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- Main Page Layout --- */
+        .page-container {
+            width: 98%;
+            max-width: 1400px; /* Wider for this complex page */
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .section-title {
+            font-size: 1.8em;
+            color: var(--header-bg);
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--header-bg);
+        }
+
+        /* --- Employee Info Banner --- */
+        .info-banner {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 30px;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            margin-bottom: 25px;
+            border-left: 5px solid var(--header-accent);
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-item .label {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .info-item .value {
+            font-size: 1em;
+            font-weight: 500;
+        }
+        .info-item .value.status-pending {
+            color: #f39c12;
+            font-weight: 700;
+        }
+
+        /* --- Main Content Layout (Timecard + Totals) --- */
+        .timecard-layout {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+        .timecard-grid-container {
+            flex: 3 1 600px; /* Grow 3x, basis 600px */
+            overflow-x: auto; /* Makes the table scrollable on small screens */
+        }
+        .totals-container {
+            flex: 1 1 300px; /* Grow 1x, basis 300px */
+            min-width: 280px;
+        }
+
+        /* --- Timecard Table Styling --- */
+        .timecard-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .timecard-table th, .timecard-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .timecard-table th {
+            background-color: #ecf0f1;
+            font-size: 0.85em;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        .timecard-table tr:last-child td {
+            border-bottom: none;
+        }
+        .timecard-table td {
+            font-size: 0.95em;
+        }
+
+        /* Exception Styling */
+        .exception-cell {
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            border-radius: 15px;
+            padding: 5px 10px;
+            font-size: 0.8em !important;
+        }
+        .exception-ok {
+            background-color: var(--exception-ok);
+        }
+        .exception-alert {
+            background-color: var(--exception-alert);
+        }
+
+        /* --- Totals Card Styling --- */
+        .totals-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        .totals-card h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        .totals-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+        }
+        .summary-item { text-align: center; }
+        .summary-item .label { font-size: 0.8em; text-transform: uppercase; color: #7f8c8d; }
+        .summary-item .value { font-size: 1.2em; font-weight: 700; }
+        .totals-table { width: 100%; border-collapse: collapse; }
+        .totals-table td { padding: 10px 5px; border-bottom: 1px solid #ecf0f1; font-size: 0.9em; }
+        .totals-table tr:last-child td { border-bottom: none; }
+        .totals-table .pay-code { font-weight: 500; }
+        .totals-table .amount { font-weight: 700; text-align: right; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 1.9em; }
+            .info-banner { gap: 10px 20px; padding: 10px 15px;}
+        }
+    </style>
+</head>
+<body>
+
+    <header class="page-header">
+        <a href="employee-dashboard.html">
+            <h1>Brendilka Time Manager</h1>
+        </a>
+    </header>
+
+    <div class="page-container">
+        <h2 class="section-title">My Timecard</h2>
+
+        <div class="info-banner">
+            <div class="info-item"><span class="label">Employee</span><span class="value">John Smith</span></div>
+            <div class="info-item"><span class="label">Employee ID</span><span class="value">1200546</span></div>
+            <div class="info-item"><span class="label">Position</span><span class="value">Snr Pay Clerk 4</span></div>
+            <div class="info-item"><span class="label">Cost Centre</span><span class="value">700541</span></div>
+            <div class="info-item"><span class="label">Timecard Status</span><span class="value status-pending">Pending</span></div>
+        </div>
+
+        <div class="timecard-layout">
+            <div class="timecard-grid-container">
+                <table class="timecard-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Schedule</th>
+                            <th>Actual Punches</th>
+                            <th>Unpaid Break</th>
+                            <th>Worked Hrs</th>
+                            <th>Leave</th>
+                            <th>Exceptions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mon 10/03/25</td>
+                            <td>09:00 - 17:06</td>
+                            <td>08:58 - 17:04</td>
+                            <td>0.30</td>
+                            <td>7.60</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Tue 11/03/25</td>
+                            <td>09:00 - 17:06</td>
+                            <td>08:59 - 18:30</td>
+                            <td>0.30</td>
+                            <td>8.06</td>
+                            <td>-</td>
+                            <td><span class="exception-cell exception-ok">Overtime</span></td>
+                        </tr>
+                        <tr>
+                            <td>Wed 12/03/25</td>
+                            <td>09:00 - 17:06</td>
+                            <td>09:00 - 14:30</td>
+                            <td>0.30</td>
+                            <td>5.00</td>
+                            <td>Sick (2.60)</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Thu 13/03/25</td>
+                            <td>09:00 - 17:06</td>
+                            <td>08:57 - ???</td>
+                            <td>0.30</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td><span class="exception-cell exception-alert">No Punch Out</span></td>
+                        </tr>
+                        <tr>
+                            <td>Fri 14/03/25</td>
+                            <td>09:00 - 17:06</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>Annual Leave</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>Sat 15/03/25</td>
+                            <td>Not Rostered</td>
+                            <td>10:00 - 14:00</td>
+                            <td>-</td>
+                            <td>4.00</td>
+                            <td>-</td>
+                            <td><span class="exception-cell exception-ok">Overtime</span></td>
+                        </tr>
+                        <tr>
+                            <td>Sun 16/03/25</td>
+                            <td>Not Rostered</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="totals-container">
+                <div class="totals-card">
+                    <h3>Pay Period Totals</h3>
+                    <div class="totals-summary">
+                        <div class="summary-item">
+                            <span class="label">Scheduled</span>
+                            <span class="value">38.00</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Actual</span>
+                            <span class="value">30.40</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="label">Unallocated</span>
+                            <span class="value text-danger">7.60</span>
+                        </div>
+                    </div>
+                    <table class="totals-table">
+                        <tr><td colspan="3"><strong>Earnings</strong></td></tr>
+                        <tr>
+                            <td class="pay-code">Ordinary</td>
+                            <td>12.60 hrs</td>
+                            <td class="amount">$100.00</td>
+                        </tr>
+                        <tr>
+                            <td class="pay-code">Overtime T1.5</td>
+                            <td>3.00 hrs</td>
+                            <td class="amount">$450.00</td>
+                        </tr>
+                        <tr>
+                            <td class="pay-code">Overtime T2.0</td>
+                            <td>1.00 hrs</td>
+                            <td class="amount">$200.00</td>
+                        </tr>
+                        <tr><td colspan="3" style="padding-top:15px;"><strong>Allowances</strong></td></tr>
+                        <tr>
+                            <td class="pay-code">Tea Money</td>
+                            <td>-</td>
+                            <td class="amount">$12.30</td>
+                        </tr>
+                         <tr><td colspan="3" style="padding-top:15px;"><strong>Leave</strong></td></tr>
+                        <tr>
+                            <td class="pay-code">Sick Leave</td>
+                             <td>2.60 hrs</td>
+                            <td class="amount">-</td>
+                        </tr>
+                        <tr>
+                            <td class="pay-code">Annual Leave</td>
+                             <td>7.60 hrs</td>
+                            <td class="amount">-</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ Help - Brendilka</title>
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --header-bg: #2c3e50; --header-accent: #1abc9c; --employee-accent: #3498db; }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: #f4f7f6; }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+        .page-container { width: 95%; max-width: 900px; margin: 20px auto; }
+        .section-title { font-size: 1.8em; color: var(--header-bg); margin-bottom: 25px; padding-bottom: 10px; border-bottom: 3px solid var(--employee-accent); }
+        details { background: #fff; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 1px 5px rgba(0,0,0,0.05); }
+        summary { font-weight: 700; cursor: pointer; padding: 20px; list-style: none; }
+        summary::-webkit-details-marker { display: none; } /* Hide default arrow */
+        .faq-answer { padding: 0 20px 20px 20px; color: #555; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="employee-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <details>
+            <summary>How do I correct a missed punch?</summary>
+            <div class="faq-answer">Navigate to "My Timecard", find the day with the "No Punch Out" exception, and click the "Edit" icon. You can then enter your correct clock-out time for your manager to review.</div>
+        </details>
+        <details>
+            <summary>Where can I see my remaining leave?</summary>
+            <div class="faq-answer">You can see a summary on your dashboard or get a detailed breakdown and history by clicking on the "My Leave Balances" tile.</div>
+        </details>
+    </div>
+</body>
+</html>

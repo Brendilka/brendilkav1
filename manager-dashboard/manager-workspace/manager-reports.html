@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Brendilka Time Manager</title>
+
+    <!-- Fonts and Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        :root {
+            --header-bg: #2c3e50;
+            --header-accent: #1abc9c;
+            --page-bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-primary: #333;
+            --accent-orange: #e67e22;
+            --border-color: #ecf0f1;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--page-bg); }
+        .page-header { background-color: var(--header-bg); color: #ecf0f1; padding: 20px; text-align: center; border-bottom: 5px solid var(--header-accent); }
+        .page-header a { text-decoration: none; color: inherit; }
+        .page-header h1 { margin: 0; font-size: 2.2em; font-weight: 400; }
+
+        .page-container { width: 95%; max-width: 1200px; margin: 30px auto; }
+
+        .section-title { width: 100%; text-align: center; font-size: 1.8em; color: var(--header-bg); margin-bottom: 30px; padding-bottom: 10px; border-bottom: 3px solid var(--accent-orange); }
+
+        .report-category { margin-bottom: 35px; }
+        .report-category h3 { color: var(--header-bg); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.4em; }
+
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+
+        .report-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .report-card-header { display: flex; align-items: flex-start; margin-bottom: 10px; }
+        .report-icon { font-size: 1.5em; color: var(--accent-orange); margin-right: 15px; }
+        .report-title { font-weight: 500; font-size: 1.1em; margin: 0; }
+        .report-description { font-size: 0.9em; color: #555; margin-bottom: 20px; flex-grow: 1; }
+        .report-action { text-align: right; }
+        .btn-run { background-color: var(--accent-orange); color: white; padding: 8px 18px; text-decoration: none; border-radius: 5px; font-weight: 500; transition: background-color 0.3s; }
+        .btn-run:hover { background-color: #d35400; }
+
+    </style>
+</head>
+<body>
+    <header class="page-header"><a href="manager-dashboard.html"><h1>Brendilka Time Manager</h1></a></header>
+    <div class="page-container">
+        <h2 class="section-title">Report Library</h2>
+
+        <div class="report-category">
+            <h3><i class="fas fa-star"></i> My Favorite Reports</h3>
+            <div class="report-grid">
+                 <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-user-clock"></i><h4 class="report-title">Team Attendance Summary</h4></div>
+                        <p class="report-description">A weekly overview of team member attendance, including exceptions for lates and absences.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+                <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-file-invoice-dollar"></i><h4 class="report-title">Overtime Hours by Cost Center</h4></div>
+                        <p class="report-description">Tracks all approved overtime hours, broken down by team and assigned cost center.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-category">
+            <h3><i class="fas fa-clock"></i> Time & Attendance Reports</h3>
+            <div class="report-grid">
+                <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-user-times"></i><h4 class="report-title">Missed Punches Report</h4></div>
+                        <p class="report-description">Lists all instances of employees failing to clock in or out for a scheduled shift.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+                 <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-calendar-check"></i><h4 class="report-title">Schedule Adherence</h4></div>
+                        <p class="report-description">Compares scheduled hours against actual hours worked for all team members.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+                 <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-plane"></i><h4 class="report-title">Leave & Absence Report</h4></div>
+                        <p class="report-description">Provides a detailed log of all leave types taken by team members in a given period.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="report-category">
+            <h3><i class="fas fa-chart-pie"></i> Payroll & Budget Reports</h3>
+             <div class="report-grid">
+                 <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-hourglass-end"></i><h4 class="report-title">Pay Period Summary</h4></div>
+                        <p class="report-description">A consolidated report of all payable hours (ordinary, overtime, leave) for payroll export.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+                <div class="report-card">
+                    <div>
+                        <div class="report-card-header"><i class="report-icon fas fa-piggy-bank"></i><h4 class="report-title">Budget vs Actuals</h4></div>
+                        <p class="report-description">Compares scheduled labor costs against the actual costs incurred for the pay period.</p>
+                    </div>
+                    <div class="report-action"><a href="#" class="btn-run">Run Report</a></div>
+                </div>
+             </div>
+        </div>
+    </div>
+</body>
+</html>
