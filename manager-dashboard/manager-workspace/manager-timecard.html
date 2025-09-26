@@ -49,12 +49,37 @@
         .timecard-header .period-nav a { background-color: var(--accent-dark-blue); }
         .timecard-header .status-badge { background-color: var(--pending-bg); font-size: 1em; }
 
-        .timecard-table-container { overflow-x: auto; background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .timecard-table-container { overflow-x: auto; background: var(--card-bg); border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); margin-bottom: 20px; }
         .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: center; border-bottom: 1px solid var(--border-color); white-space: nowrap; }
-        .data-table thead th { background-color: #f8f9fa; color: var(--text-secondary); font-weight: 500; }
-        .data-table tbody tr:hover { background-color: #f1f1f1; }
+        .data-table th, .data-table td { padding: 10px 12px; text-align: center; border-bottom: 1px solid var(--border-color); border-right: 1px solid var(--border-color); white-space: nowrap; font-size: 0.92em; }
+        .data-table td:last-child { border-right: none; }
+        .data-table th { 
+            background-color: #f0f4f7; 
+            color: var(--text-secondary); 
+            font-weight: 600; 
+            text-align: left; 
+            min-width: 180px;
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+        .data-table tr:nth-child(even) { background-color: #f9f9f9; }
+        .data-table tr:hover { background-color: #f1f1f1; }
         .exception { background-color: var(--exception-bg); color: white; font-weight: bold; padding: 3px 8px; border-radius: 4px; }
+        
+        /* Additional styles for the enhanced timecard */
+        .data-table tr:first-child th,
+        .data-table tr:first-child td {
+            position: sticky;
+            top: 0;
+            background-color: #e4e7eb;
+            z-index: 2;
+            font-weight: 600;
+        }
+        .data-table tr:first-child th {
+            z-index: 3; /* Corner cell needs highest z-index */
+        }
 
         .totals-section { margin-top: 25px; }
         .totals-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
@@ -88,26 +113,127 @@
 
         <div class="timecard-table-container">
             <table class="data-table">
-                <thead>
+                <tbody>
                     <tr>
                         <th>Date</th>
-                        <th>Schedule</th>
-                        <th>Actual Punches</th>
-                        <th>Unpaid Break</th>
-                        <th>Worked Hrs</th>
-                        <th>Leave Type</th>
-                        <th>Leave Hrs</th>
-                        <th>Exceptions</th>
+                        <td>Mon 10/03</td>
+                        <td>Tue 11/03</td>
+                        <td>Wed 12/03</td>
+                        <td>Thu 13/03</td>
+                        <td>Fri 14/03</td>
+                        <td>Sat 15/03</td>
+                        <td>Sun 16/03</td>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Mon 10/03</td><td>09:00 - 17:06</td><td>08:58 - 17:04</td><td>0.30</td><td>7.36</td><td>-</td><td>-</td><td>-</td></tr>
-                    <tr><td>Tue 11/03</td><td>09:00 - 17:06</td><td>08:59 - 18:30</td><td>0.30</td><td>8.06</td><td>-</td><td>-</td><td class="exception">Overtime</td></tr>
-                    <tr><td>Wed 12/03</td><td>09:00 - 17:06</td><td>09:00 - 14:30</td><td>0.30</td><td>5.36</td><td>Sick</td><td>2.60</td><td>-</td></tr>
-                    <tr><td>Thu 13/03</td><td>09:00 - 17:06</td><td>08:57 - </td><td>0.30</td><td>-</td><td>-</td><td>-</td><td class="exception">No Punch Out</td></tr>
-                    <tr><td>Fri 14/03</td><td>09:00 - 17:06</td><td>-</td><td>-</td><td>-</td><td>Annual Leave</td><td>7.36</td><td>-</td></tr>
-                    <tr><td>Sat 15/03</td><td>Not Rostered</td><td>10:00 - 14:00</td><td>-</td><td>4.00</td><td>-</td><td>-</td><td class="exception">Unrostered</td></tr>
-                    <tr><td>Sun 16/03</td><td>Not Rostered</td><td>Not Rostered</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr>
+                        <th>Schedule</th>
+                        <td>09:00 - 17:06</td>
+                        <td>09:00 - 17:06</td>
+                        <td>09:00 - 17:06</td>
+                        <td>09:00 - 17:06</td>
+                        <td>09:00 - 17:06</td>
+                        <td>Not Rostered</td>
+                        <td>Not Rostered</td>
+                    </tr>
+                    <tr>
+                        <th>Shift Hours (Minutes)</th>
+                        <td>8:06 (486)</td>
+                        <td>8:06 (486)</td>
+                        <td>8:06 (486)</td>
+                        <td>8:06 (486)</td>
+                        <td>8:06 (486)</td>
+                        <td>- (-)</td>
+                        <td>- (-)</td>
+                    </tr>
+                    <tr>
+                        <th>Actual Shift Punches</th>
+                        <td>08:58 - 17:04</td>
+                        <td>08:59 - 18:30</td>
+                        <td>09:00 - 14:30</td>
+                        <td>08:57 - </td>
+                        <td>-</td>
+                        <td>10:00 - 14:00</td>
+                        <td>Not Rostered</td>
+                    </tr>
+                    <tr>
+                        <th>Unpaid Meal Break</th>
+                        <td>0.30</td>
+                        <td>0.30</td>
+                        <td>0.30</td>
+                        <td>0.30</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Worked Hours (Minutes)</th>
+                        <td>7.36 (456)</td>
+                        <td>8.06 (486)</td>
+                        <td>5.36 (336)</td>
+                        <td>- (-)</td>
+                        <td>- (-)</td>
+                        <td>4.00 (240)</td>
+                        <td>- (-)</td>
+                    </tr>
+                    <tr>
+                        <th>Leave</th>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>Sick</td>
+                        <td>-</td>
+                        <td>Annual Leave</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Lve Hours/Part Duration</th>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>2.60</td>
+                        <td>-</td>
+                        <td>7.36</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Higher Duties</th>
+                        <td>-</td>
+                        <td>Level 5</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Full Day Cost Transfer</th>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>Dept 450</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Multiple CC Job Transfer +</th>
+                        <td>-</td>
+                        <td>CC 700542 (2hrs)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>CC 800123 (4hrs)</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <th>Exception</th>
+                        <td>-</td>
+                        <td><span class="exception">Overtime</span></td>
+                        <td>-</td>
+                        <td><span class="exception">No Punch Out</span></td>
+                        <td>-</td>
+                        <td><span class="exception">Unrostered</span></td>
+                        <td>-</td>
+                    </tr>
                 </tbody>
             </table>
         </div>
